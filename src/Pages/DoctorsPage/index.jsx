@@ -1,50 +1,54 @@
 import { useEffect, useState } from "react";
 import Table from "../../Components/Table";
 import { useStore } from "../../Store";
-import PopUpForm from "../../Components/PopUpFrom";
+import PopUpDoctors from "../../Components/PopUpDoctors";
 
 const DoctorsPage = () => {
-  const [doctors, setDoctors] = useState([]);
+  // PopUp Toggle
+  const { popUpToggel } = useStore();
+
+  const [doctors, setDoctors] = useState([])
+
   const getData = () => {
-    setDoctors([{
-      id: 1,
-      yearName: "زياد مصطفي عيد",
-      adress: "طنطا شارع المامون مع النحاس",
-      specialty: "متخصص وجهات الكترونية",
-      feild: "قسم البرمجيات والتطوير",
-    },
-    {
-      id: 2,
-      yearName: "زياد مصطفي عيد",
-      adress: "طنطا شارع المامون مع النحاس",
-      specialty: "متخصص وجهات الكترونية",
-      feild: "قسم البرمجيات والتطوير",
-    },
-    {
-      id: 3,
-      yearName: "زياد مصطفي عيد",
-      adress: "طنطا شارع المامون مع النحاس",
-      specialty: "متخصص وجهات الكترونية",
-      feild: "قسم البرمجيات والتطوير",
-    }
+    setDoctors([
+      {
+        doctorName: "محمد عبدالسميع",
+        major: "محاسبة"
+      },
+      {
+        doctorName: "محمود اسماعيل",
+        major: "تسويق"
+      },
+      {
+        doctorName: "ربيع منصور",
+        major: "محاسبة"
+      },
     ])
   }
   useEffect(() => {
     getData();
+    
   }, []);
 
-  // PopUp Toggle
-  const { popUpToggel } = useStore();
-  
+  // Delete Subject
+  const deleteRow = (index) => {
+    const newDoctors = doctors.filter((el, i) => i !== index);
+    setDoctors([...newDoctors])
+  }
+
   return (
     <div>
       {
         popUpToggel &&
-        <div className="fixed top-0 end-0 bottom-0 start-0 flex justify-center items-center bg-[#171e2e61] backdrop-blur">
-          <PopUpForm />
+        <div className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur">
+          <PopUpDoctors setRow={setDoctors} />
         </div>
       }
-      <Table headers={["#", "الأسم", "العنوان", "التخصص", "الاقسام", "",]} tableData={doctors} />
+      <Table
+        headers={["#", "الأسم", "التخصص", ""]}
+        tableData={doctors}
+        deleteRow={deleteRow}
+      />
     </div>
   )
 }

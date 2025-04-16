@@ -19,7 +19,7 @@ const Sidebar = () => {
     sectionsActive,
     subjectsActive,
     doctorsActive,
-    studentsActive
+    studentsActive,
   } = useStore();
 
   return (
@@ -28,7 +28,7 @@ const Sidebar = () => {
     >
       <div
         onClick={() => setCloseSide(!closeSide)}
-        className="open-icon text-md text-black dark:text-white bg-[#fcfcfc] dark:bg-[#171e2e] p-2 border border-gray-200 dark:border-gray-700 border-dashed rounded-e absolute start-[100%] top-[20px] z-50 hover:shadow-lg cursor-pointer hidden md:block"
+        className="open-icon text-md text-black dark:text-white bg-[#fcfcfc] dark:bg-[#171e2e] p-2 border border-gray-200 dark:border-gray-700 border-dashed rounded-e absolute start-[100%] top-[20px] z-40 hover:shadow-lg cursor-pointer hidden md:block"
       >
         {
           closeSide
@@ -46,7 +46,11 @@ const Sidebar = () => {
         <ul className="flex flex-col gap-2">
           <Link
             to={"/"}
-            onClick={yearsActive}
+            onClick={() => {
+              yearsActive();
+              localStorage.setItem("pageName", "studyYears")
+            }
+            }
             className={`p-2 outline-0 ${pageName == "studyYears" ? "bg-[#2a52be] text-white text-lg" : "text-gray-500 hover:text-[#2a52be] dark:hover:text-white duration-150"} text-md rounded-lg flex ${!closeSide && "md:justify-center"} justify-center md:justify-start items-center gap-2 outline-0`}
           >
             <MdTimer />
@@ -54,34 +58,50 @@ const Sidebar = () => {
           </Link>
           <Link
             to={"/sections"}
-            onClick={sectionsActive}
+            onClick={() => {
+              sectionsActive();
+              localStorage.setItem("pageName", "sections")
+            }
+            }
             className={`p-2 outline-0 ${pageName == "sections" ? "bg-[#2a52be] text-white text-lg" : "text-gray-500 hover:text-[#2a52be] dark:hover:text-white duration-150"} text-md rounded-lg flex ${!closeSide && "md:justify-center"} justify-center md:justify-start items-center gap-2 outline-0`}
           >
-              <PiChartPieSliceFill />
+            <PiChartPieSliceFill />
             <span className={`${!closeSide && "md:hidden"} hidden md:block shrink-0`}>أقسام</span>
           </Link>
           <Link
             to={"/subjects"}
-            onClick={subjectsActive}
+            onClick={() => {
+              subjectsActive();
+              localStorage.setItem("pageName", "subjects")
+            }
+            }
             className={`p-2 outline-0 ${pageName == "subjects" ? "bg-[#2a52be] text-white text-lg" : "text-gray-500 hover:text-[#2a52be] dark:hover:text-white duration-150"} text-md rounded-lg flex ${!closeSide && "md:justify-center"} justify-center md:justify-start items-center gap-2 outline-0`}
           >
-              <PiBooksFill />
+            <PiBooksFill />
             <span className={`${!closeSide && "md:hidden"} hidden md:block shrink-0`}>المواد</span>
           </Link>
           <Link
             to={"/doctors"}
-            onClick={doctorsActive}
+            onClick={() => {
+              doctorsActive();
+              localStorage.setItem("pageName", "doctors")
+            }
+            }
             className={`p-2 outline-0 ${pageName == "doctors" ? "bg-[#2a52be] text-white text-lg" : "text-gray-500 hover:text-[#2a52be] dark:hover:text-white duration-150"} text-md rounded-lg flex ${!closeSide && "md:justify-center"} justify-center md:justify-start items-center gap-2 outline-0`}
           >
-              <FaUserTie />
+            <FaUserTie />
             <span className={`${!closeSide && "md:hidden"} hidden md:block shrink-0`}>الدكاترة</span>
           </Link>
           <Link
             to={"/students"}
-            onClick={studentsActive}
+            onClick={() => {
+              studentsActive();
+              localStorage.setItem("pageName", "students")
+            }
+            }
             className={`p-2 outline-0 ${pageName == "students" ? "bg-[#2a52be] text-white text-lg" : "text-gray-500 hover:text-[#2a52be] dark:hover:text-white duration-150"} text-md rounded-lg flex ${!closeSide && "md:justify-center"} justify-center md:justify-start items-center gap-2 outline-0`}
           >
-              <FaUserGraduate />
+            <FaUserGraduate />
             <span className={`${!closeSide && "md:hidden"} hidden md:block shrink-0`}>الطلاب</span>
           </Link>
         </ul>

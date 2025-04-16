@@ -6,7 +6,7 @@ import { TiPlus } from "react-icons/ti";
 import { useStore } from "../../Store";
 
 
-const Table = ({ headers, tableData }) => {
+const Table = ({ headers, tableData, deleteRow }) => {
   // PopUp Toggle
   const { popUpIsOpen } = useStore();
 
@@ -18,7 +18,7 @@ const Table = ({ headers, tableData }) => {
             <input className="w-full text-center md:text-start p-2 bg-gray-100 dark:bg-[#171e2e] shadow text-[#171e2e] dark:text-white rounded" type="search" name="search" placeholder="Search" />
           </div>
           <div
-            onClick={popUpIsOpen}
+            onClick={() =>  {popUpIsOpen()}}
             className="addnew group flex items-center justify-center gap-4 bg-gray-100 dark:bg-[#171e2e] md:w-fit sm:w-full px-4 py-2 text-[#171e2e] dark:text-gray-400 rounded-lg border-2 border-gray-500 dark:border-gray-600 border-dashed cursor-pointer"
           >
             <div className="group-hover:shadow dark:group-hover:text-white duration-150 p-[5px] text-sm bg-white shadow dark:bg-gray-900 rounded-full">
@@ -42,16 +42,20 @@ const Table = ({ headers, tableData }) => {
               {
                 tableData.map((el, index) => (
                   <tr key={index} className={`${style.shadowCustomed} rounded-lg bg-white dark:bg-[#171e2e] shadow text-gray-900 dark:text-white`}>
-                    <td className="text-sm px-4 py-6">{el.id}</td>
-                    <td className="max-w-[250px] text-sm px-4 py-6">{el.yearName}</td>
-                    <td className="max-w-[300px] text-sm px-4 py-6">{el.adress}</td>
-                    <td className="max-w-[300px] text-sm px-4 py-6">{el.specialty}</td>
-                    <td className="max-w-[250px] text-sm px-4 py-6">{el.feild}</td>
+                    <td className="text-sm px-4 py-6">{index + 1}</td>
+                    {
+                      Object.keys(el).map((key) => (
+                        <td key={key} className="max-w-[250px] text-sm px-4 py-6">{el[key]}</td>
+                      ))
+                    }
                     <td className="flex items-center gap-2">
                       <div className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer">
                         <BiSolidEdit />
                       </div>
-                      <div className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer">
+                      <div 
+                      onClick={() => deleteRow(index)}
+                      className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
+                      >
                         <MdDelete />
                       </div>
                     </td>

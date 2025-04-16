@@ -5,7 +5,7 @@ const LayoutWraper = ({children}) => {
   return (
     <div className="flex dark:bg-gray-900">
       <Sidebar />
-      <div className="w-[80%] overflow-auto h-screen">
+      <div className="grow overflow-auto h-screen">
         <Navbar />
         {children}
       </div>

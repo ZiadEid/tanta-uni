@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Table from "../../Components/Table";
 import { useStore } from "../../Store";
-import PopUpDoctors from "../../Components/PopUpDoctors";
+import PopUpForm from "../../Components/PopUpForm";
 
 const DoctorsPage = () => {
   // PopUp Toggle
-  const { popUpToggel } = useStore();
-
-  const [doctors, setDoctors] = useState([])
+  const { popUpToggel, doctors, setDoctors, doctorsActive, setPopUpInitValues } = useStore();
 
   const getData = () => {
     setDoctors([
@@ -25,9 +23,18 @@ const DoctorsPage = () => {
       },
     ])
   }
+
+  // Set PopUp InitValues
+  const setPopUpInialtValues = () => {
+    setPopUpInitValues({
+      doctorName: "",
+      doctorMajor: "محاسبة",
+    })
+  }
   useEffect(() => {
     getData();
-    
+    setPopUpInialtValues();
+    doctorsActive();
   }, []);
 
   // Delete Subject
@@ -41,7 +48,7 @@ const DoctorsPage = () => {
       {
         popUpToggel &&
         <div className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur">
-          <PopUpDoctors setRow={setDoctors} />
+          <PopUpForm />
         </div>
       }
       <Table

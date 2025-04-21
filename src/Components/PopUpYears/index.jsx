@@ -7,7 +7,7 @@ import { useStore } from '../../Store';
 
 const PopUpYears = ({ setRow }) => {
   // PopUp Toggle
-  const { popUpIsClosed, pageName } = useStore();
+  const { popUpIsClosed } = useStore();
 
   // form on submit function
   const onSubmit = (values, actions) => {

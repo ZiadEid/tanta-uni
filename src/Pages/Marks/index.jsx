@@ -1,39 +1,39 @@
-import { useEffect, useState } from 'react'
-import Table from '../../Components/Table';
+import React, { useEffect } from 'react'
 import { useStore } from '../../Store';
 import PopUpForm from '../../Components/PopUpForm';
+import Table from '../../Components/Table';
 
-const SubjectsPage = () => {
+const Marks = () => {
   // PopUp Toggle
-  const { popUpToggel, subjectsActive, subjects, setSubjects, setPopUpInitValues } = useStore();
+  const { popUpToggel, marks, setMarks, marksActive, setPopUpInitValues } = useStore();
   const getData = () => {
-    setSubjects([
+    setMarks([
       {
         subjectName: "bussnise",
-        code: "12FG",
-        hoursNumber: "25",
+        studentName: "محمد فؤاد",
+        mark: "60",
         highestDegree: "100",
         doctorId: "محمد عبدالسميع",
         sectionId: "محاسبة",
         yearId: "رابعة"
       },
       {
-        subjectName: "marketing",
-        code: "12FG",
-        hoursNumber: "25",
+        subjectName: "Marketing",
+        studentName: "وليد السيد",
+        mark: "80",
         highestDegree: "100",
-        doctorId: "محمود اسماعيل",
-        sectionId: "تسويق",
-        yearId: "ثالثة"
+        doctorId: "محمد عبدالسميع",
+        sectionId: "محاسبة",
+        yearId: "رابعة"
       },
       {
-        subjectName: "Taxes",
-        code: "12FG",
-        hoursNumber: "25",
+        subjectName: "bussnise",
+        studentName: "زياد مصطفي عيد",
+        mark: "70",
         highestDegree: "100",
-        doctorId: "ربيع منصور",
+        doctorId: "محمد عبدالسميع",
         sectionId: "محاسبة",
-        yearId: "ثانية"
+        yearId: "رابعة"
       },
     ]);
   }
@@ -42,8 +42,8 @@ const SubjectsPage = () => {
   const setPopUpInialtValues = () => {
     setPopUpInitValues({
       subjectName: "",
-      subjectCode: "",
-      hoursNumber: "",
+      studentName: "",
+      mark: "",
       highestDegree: "",
       doctorId: "محمد عبدالسميع",
       sectionId: "محاسبة",
@@ -55,13 +55,13 @@ const SubjectsPage = () => {
   useEffect(() => {
     getData();
     setPopUpInialtValues();
-    subjectsActive();
+    marksActive();
   }, []);
 
   // Delete Subject
   const deleteRow = (index) => {
     const newSubjects = subjects.filter((el, i) => i !== index);
-    setSubjects([...newSubjects])
+    setMarks([...newSubjects])
   }
 
   return (
@@ -73,12 +73,12 @@ const SubjectsPage = () => {
         </div>
       }
       <Table
-        headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "القسم", "السنة", "الدرجات", ""]}
-        tableData={subjects}
+        headers={["#", "المادة", "الطالب", "الدرجة", "اعلي درجة", "دكتور", "القسم", "السنة", ""]}
+        tableData={marks}
         deleteRow={deleteRow}
       />
     </div>
   )
 }
 
-export default SubjectsPage
+export default Marks

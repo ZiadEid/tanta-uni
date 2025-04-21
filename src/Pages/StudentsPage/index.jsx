@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Table from '../../Components/Table';
 import { useStore } from '../../Store';
-import PopUpStudents from '../../Components/PopUpStudents';
+import PopUpForm from '../../Components/PopUpForm';
 
 const StudentsPage = () => {
-  const [students, setStudents] = useState([]);
+  // PopUp Toggle
+  const { popUpToggel, students, setStudents, studentsActive, setPopUpInitValues } = useStore();
+
   const getData = () => {
     setStudents([
       {
@@ -24,8 +26,20 @@ const StudentsPage = () => {
       },
     ])
   }
+
+  // Set PopUp InitValues
+  const setPopUpInialtValues = () => {
+    setPopUpInitValues({
+      studentName: "",
+      studentMajor: "محاسبة",
+      yearId: "اولي"
+    })
+  }
+
   useEffect(() => {
     getData();
+    setPopUpInialtValues();
+    studentsActive();
   }, []);
 
   // Delete Subject
@@ -34,15 +48,12 @@ const StudentsPage = () => {
     setStudents([...newStudents])
   }
 
-  // PopUp Toggle
-  const { popUpToggel } = useStore();
-
   return (
     <div>
       {
         popUpToggel &&
         <div className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur">
-          <PopUpStudents setRow={setStudents} />
+          <PopUpForm />
         </div>
       }
       <Table

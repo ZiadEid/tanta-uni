@@ -2,24 +2,26 @@ import style from "./index.module.css"
 import { BiSolidEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
 import { useStore } from "../../Store";
+import { Link } from "react-router-dom";
 
 
 const Table = ({ headers, tableData, deleteRow }) => {
   // PopUp Toggle
-  const { popUpIsOpen } = useStore();
+  const { popUpIsOpen, pageName } = useStore();
 
   return (
     <div className='px-6 mt-2'>
       <div>
         <div className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2">
           <div className="search-btn">
-            <input className="w-full text-center md:text-start p-2 bg-gray-100 dark:bg-[#171e2e] shadow text-[#171e2e] dark:text-white rounded" type="search" name="search" placeholder="Search" />
+            <input className="w-full text-center md:text-start p-2 bg-gray-100 dark:bg-gray-800 shadow text-[#171e2e] dark:text-white rounded" type="search" name="search" placeholder="Search" />
           </div>
           <div
-            onClick={() =>  {popUpIsOpen()}}
-            className="addnew group flex items-center justify-center gap-4 bg-gray-100 dark:bg-[#171e2e] md:w-fit sm:w-full px-4 py-2 text-[#171e2e] dark:text-gray-400 rounded-lg border-2 border-gray-500 dark:border-gray-600 border-dashed cursor-pointer"
+            onClick={() => { popUpIsOpen() }}
+            className="addnew group flex items-center justify-center gap-4 bg-gray-100 dark:bg-gray-800 md:w-fit sm:w-full px-4 py-2 text-[#171e2e] dark:text-gray-400 rounded-lg border-2 border-gray-500 dark:border-gray-600 border-dashed cursor-pointer"
           >
             <div className="group-hover:shadow dark:group-hover:text-white duration-150 p-[5px] text-sm bg-white shadow dark:bg-gray-900 rounded-full">
               <TiPlus />
@@ -30,7 +32,7 @@ const Table = ({ headers, tableData, deleteRow }) => {
         <div className="overflow-auto">
           <table className="min-w-[800px] table-auto w-full border-separate border-spacing-y-4">
             <thead>
-              <tr className={`${style.shadowCustomed} rounded bg-white dark:bg-[#171e2e] shadow-lg text-gray-500 dark:text-gray-300`}>
+              <tr className={`${style.shadowCustomed} rounded bg-gray-100 dark:bg-gray-800 shadow-lg text-gray-800 dark:text-gray-300`}>
                 {
                   headers.map((header, index) => (
                     <th key={index} className={`text-start text-sm px-4 py-6`}>{header}</th>
@@ -41,7 +43,7 @@ const Table = ({ headers, tableData, deleteRow }) => {
             <tbody>
               {
                 tableData.map((el, index) => (
-                  <tr key={index} className={`${style.shadowCustomed} rounded-lg bg-white dark:bg-[#171e2e] shadow text-gray-900 dark:text-white`}>
+                  <tr key={index} className={`${style.shadowCustomed} rounded-lg bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
                     <td className="text-sm px-4 py-6">{index + 1}</td>
                     {
                       Object.keys(el).map((key) => (
@@ -52,20 +54,31 @@ const Table = ({ headers, tableData, deleteRow }) => {
                       <div className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer">
                         <BiSolidEdit />
                       </div>
-                      <div 
-                      onClick={() => deleteRow(index)}
-                      className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
+                      <div
+                        onClick={() => deleteRow(index)}
+                        className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
                       >
                         <MdDelete />
                       </div>
                     </td>
+                    {
+                      pageName == "subjects"
+                      &&
+                      <td className="text-sm px-4 py-6 text-green-600">
+                        <Link
+                          to={`${index}`}
+                        >
+                          <FaExternalLinkAlt />
+                        </Link>
+                      </td>
+                    }
                   </tr>
                 ))
               }
             </tbody>
           </table>
         </div>
-        <div className={`${style.shadowCustomed} mb-4 px-4 py-6 bg-white dark:bg-[#171e2e] shadow-lg text-gray-900 dark:text-gray-400 rounded flex justify-center items-center md:gap-2`}>
+        <div className={`${style.shadowCustomed} mb-4 px-4 py-6 bg-gray-100 dark:bg-gray-800 shadow-lg text-gray-900 dark:text-gray-400 rounded flex justify-center items-center md:gap-2`}>
           <div className="cursor-pointer hover:text-white hover:bg-gray-900 p-2 rounded-full">
             <HiOutlineArrowLongRight />
           </div>
@@ -75,7 +88,7 @@ const Table = ({ headers, tableData, deleteRow }) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

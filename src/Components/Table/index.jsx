@@ -2,33 +2,21 @@ import style from "./index.module.css"
 import { BiSolidEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { TiPlus } from "react-icons/ti";
+import { FaEye, FaPlus } from "react-icons/fa";
 import { useStore } from "../../Store";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 
-const Table = ({ headers, tableData, deleteRow }) => {
-  // PopUp Toggle
-  const { popUpIsOpen, pageName } = useStore();
+const Table = ({ headers, tableData, id, deleteRow }) => {
+  const { user, setSingleSubject, pageName } = useStore();
+  useEffect(() => {
+    console.log(pageName)
+  }, [])
 
   return (
-    <div className='px-6 mt-2'>
+    <div className='px-6'>
       <div>
-        <div className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2">
-          <div className="search-btn">
-            <input className="w-full text-center md:text-start p-2 bg-gray-100 dark:bg-gray-800 shadow text-[#171e2e] dark:text-white rounded" type="search" name="search" placeholder="Search" />
-          </div>
-          <div
-            onClick={() => { popUpIsOpen() }}
-            className="addnew group flex items-center justify-center gap-4 bg-gray-100 dark:bg-gray-800 md:w-fit sm:w-full px-4 py-2 text-[#171e2e] dark:text-gray-400 rounded-lg border-2 border-gray-500 dark:border-gray-600 border-dashed cursor-pointer"
-          >
-            <div className="group-hover:shadow dark:group-hover:text-white duration-150 p-[5px] text-sm bg-white shadow dark:bg-gray-900 rounded-full">
-              <TiPlus />
-            </div>
-            <span className="group-hover:text-gray-900 dark:group-hover:text-white duration-150">Add New</span>
-          </div>
-        </div>
         <div className="overflow-auto">
           <table className="min-w-[800px] table-auto w-full border-separate border-spacing-y-4">
             <thead>
@@ -43,33 +31,84 @@ const Table = ({ headers, tableData, deleteRow }) => {
             <tbody>
               {
                 tableData.map((el, index) => (
-                  <tr key={index} className={`${style.shadowCustomed} rounded-lg bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
+                  <tr key={id[index]} className={`${style.shadowCustomed} rounded-lg bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
                     <td className="text-sm px-4 py-6">{index + 1}</td>
                     {
                       Object.keys(el).map((key) => (
                         <td key={key} className="max-w-[250px] text-sm px-4 py-6">{el[key]}</td>
                       ))
                     }
-                    <td className="flex items-center gap-2">
-                      <div className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer">
-                        <BiSolidEdit />
-                      </div>
-                      <div
-                        onClick={() => deleteRow(index)}
-                        className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
-                      >
-                        <MdDelete />
-                      </div>
-                    </td>
+                    {
+                      pageName !== "doctorSubject"
+                      &&
+                      <td className="flex items-center gap-2">
+                        {
+                          user.role === "employee"
+                          &&
+                          <div className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer">
+                            <BiSolidEdit />
+                          </div>
+                        }
+                        {
+                          pageName !== "markes"
+                          &&
+                          <div
+                            onClick={() => deleteRow(id[index])}
+                            className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
+                          >
+                            <MdDelete />
+                          </div>
+                        }
+                      </td>
+                    }
+                    {
+                      pageName === "doctorSubject"
+                      &&
+                      <td>
+                        <Link
+                          to={`${id[index]}`}
+                          onClick={() => {
+                            setSingleSubject({
+                              name: el.name,
+                              highestDegree: el.highestDegree
+                            })
+                          }}
+                          className="text-lg py-6 text-blue-600"
+                        >
+                          <FaEye />
+                        </Link>
+                      </td>
+                    }
                     {
                       pageName == "subjects"
                       &&
-                      <td className="text-sm px-4 py-6 text-green-600">
-                        <Link
-                          to={`${index}`}
-                        >
-                          <FaExternalLinkAlt />
-                        </Link>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to={`${id[index]}`}
+                            onClick={() => {
+                              setSingleSubject({
+                                name: el.name,
+                                highestDegree: el.highestDegree
+                              })
+                            }}
+                            className="text-sm px-2 py-6 text-green-600"
+                          >
+                            <FaPlus />
+                          </Link>
+                          <Link
+                            to={`${id[index]}/markes`}
+                            onClick={() => {
+                              setSingleSubject({
+                                name: el.name,
+                                highestDegree: el.highestDegree
+                              })
+                            }}
+                            className="text-lg px-2 py-6 text-blue-600"
+                          >
+                            <FaEye />
+                          </Link>
+                        </div>
                       </td>
                     }
                   </tr>

@@ -1,67 +1,68 @@
 import { useEffect, useState } from 'react'
 import Table from '../../Components/Table';
 import { useStore } from '../../Store';
-import PopUpForm from '../../Components/PopUpForm';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import PopUpSubjects from '../../Components/PopUpSubjects';
+import { useNavigate, useParams } from 'react-router-dom';
+import SearchInput from '../../Components/SearchInput';
+import AddNewBtn from '../../Components/AddNewBtn';
 
 const SubjectsPage = () => {
-  // PopUp Toggle
-  const { popUpToggel, subjectsActive, subjects, setSubjects, setPopUpInitValues } = useStore();
-  const getData = () => {
-    setSubjects([
-      {
-        subjectName: "bussnise",
-        code: "12FG",
-        hoursNumber: "25",
-        highestDegree: "100",
-        doctorId: "محمد عبدالسميع",
-        sectionId: "محاسبة",
-        yearId: "رابعة"
-      },
-      {
-        subjectName: "marketing",
-        code: "12FG",
-        hoursNumber: "25",
-        highestDegree: "100",
-        doctorId: "محمود اسماعيل",
-        sectionId: "تسويق",
-        yearId: "ثالثة"
-      },
-      {
-        subjectName: "Taxes",
-        code: "12FG",
-        hoursNumber: "25",
-        highestDegree: "100",
-        doctorId: "ربيع منصور",
-        sectionId: "محاسبة",
-        yearId: "ثانية"
-      },
-    ]);
-  }
+  const { mSection } = useParams();
+  const navigate = useNavigate();
+  const { BASE_URL, token, popUpToggel, subjectsActive } = useStore();
+  const [subjects, setSubjects] = useState([]);
+  const [id, setId] = useState([]);
 
-  // Set PopUp InitValues
-  const setPopUpInialtValues = () => {
-    setPopUpInitValues({
-      subjectName: "",
-      subjectCode: "",
-      hoursNumber: "",
-      highestDegree: "",
-      doctorId: "محمد عبدالسميع",
-      sectionId: "محاسبة",
-      yearId: "اولي"
-    })
+  const getData = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}subject/findAll/${mSection}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const newSubjects = [];
+      const newId = [];
+      res.data.newSubjects.forEach((el) => {
+        newSubjects.push({
+          name: el.name,
+          code: el.code,
+          hoursNumber: el.hoursNumber,
+          highestDegree: el.highestDegree,
+          doctorName: el.doctorName,
+          yearName: el.yearName,
+        });
+        newId.push(el._id);
+      })
+      setSubjects(newSubjects);
+      setId(newId);
+    } catch (error) {
+      navigate("/error")
+    }
   }
 
   // Get Subjects
   useEffect(() => {
     getData();
-    setPopUpInialtValues();
     subjectsActive();
   }, []);
 
   // Delete Subject
-  const deleteRow = (index) => {
-    const newSubjects = subjects.filter((el, i) => i !== index);
-    setSubjects([...newSubjects])
+  const deleteRow = async (index) => {
+    try {
+      const res = await axios.delete(`${BASE_URL}subject/deleteOne/${index}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      notify();
+      getData();
+    } catch (error) {
+      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
+      notify();
+    }
   }
 
   return (
@@ -69,14 +70,22 @@ const SubjectsPage = () => {
       {
         popUpToggel &&
         <div className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur">
-          <PopUpForm />
+          <PopUpSubjects getData={getData} />
         </div>
       }
+      <div
+        className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2 px-6 mt-2"
+      >
+        <SearchInput />
+        <AddNewBtn />
+      </div>
       <Table
-        headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "القسم", "السنة", "الدرجات", ""]}
+        headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "السنة", "", "الدرجات"]}
         tableData={subjects}
+        id={id}
         deleteRow={deleteRow}
       />
+      <ToastContainer />
     </div>
   )
 }

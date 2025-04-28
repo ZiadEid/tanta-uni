@@ -1,25 +1,41 @@
 import { useFormik } from 'formik';
 import { IoClose } from "react-icons/io5";
 import { BsAlphabet } from "react-icons/bs";
-import { TbNumbers } from "react-icons/tb";
+import { IoMdArrowDropdown } from "react-icons/io";
 import { PopUpYearsSchema } from './PopUpYearsSchema';
 import { useStore } from '../../Store';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 
-const PopUpYears = ({ setRow }) => {
-  // PopUp Toggle
-  const { popUpIsClosed } = useStore();
+const PopUpYears = ({ getData }) => {
+  const { BASE_URL, token, popUpIsClosed } = useStore();
+  const { mSection } = useParams();
 
   // form on submit function
-  const onSubmit = (values, actions) => {
-    setRow((prev) => [values, ...prev,]);
-    popUpIsClosed()
-    actions.resetForm();
+  const onSubmit = async (values, actions) => {
+    try {
+      const res = await axios.post(`${BASE_URL}year/createYear`, values, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      popUpIsClosed();
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      notify();
+      getData();
+      actions.resetForm();
+    } catch (error) {
+      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
+      notify();
+    }
   }
 
   // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      yearName: "" 
+      name: "",
+      sectionName: `${mSection}`
     },
     validationSchema: PopUpYearsSchema,
     onSubmit
@@ -39,9 +55,9 @@ const PopUpYears = ({ setRow }) => {
         <input
           className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='yearName'
+          name='name'
           placeholder='اسم السنة'
-          value={values.yearName}
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -50,8 +66,8 @@ const PopUpYears = ({ setRow }) => {
         </div>
       </div>
       {
-        errors.yearName && touched.yearName &&
-        <p className='error text-[#dc3545]'>{errors.yearName}</p>
+        errors.name && touched.name &&
+        <p className='error text-[#dc3545]'>{errors.name}</p>
       }
       <button
         disabled={isSubmitting}

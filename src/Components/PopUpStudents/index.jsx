@@ -3,25 +3,82 @@ import { IoClose } from "react-icons/io5";
 import { BsAlphabet } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useStore } from '../../Store';
+import { MdEmail } from "react-icons/md";
+import { FaIdCard } from "react-icons/fa6";
+import { TbNumbers } from "react-icons/tb";
 import { PopUpStudentsSchema } from './PopUpStudentsSchema';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 
-const PopUpStudents = ({ setRow }) => {
-  // PopUp Toggle
-  const { popUpIsClosed } = useStore();
+const PopUpStudents = ({ getData }) => {
+  const { mSection } = useParams();
+  const { BASE_URL, token, popUpIsClosed } = useStore();
+  const [years, setYears] = useState([]);
+  const [yearId, setYearId] = useState([]);
+
+  const getYears = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}year/findAll/${mSection}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const newYears = [];
+      const newId = [];
+      res.data.years.forEach((el) => {
+        newYears.push(el.name);
+        newId.push(el._id);
+      })
+      setYears(newYears);
+      setYearId(newId);
+    } catch (error) {
+      console.log(error);
+      navigate("/error")
+    }
+  }
+
+  useEffect(() => {
+    getYears();
+  }, []);
 
   // form on submit function
-  const onSubmit = (values, actions) => {
-    setRow((prev) => [values, ...prev,]);
-    popUpIsClosed()
-    actions.resetForm();
+  const onSubmit = async (values, actions) => {
+    const newValues = {
+      ...values,
+      nationalId: `${values.nationalId}`,
+      phoneNumber: `0${values.phoneNumber}`,
+      universityId: `${values.universityId}`,
+      sectionName: `${mSection}`
+    }
+    try {
+      const res = await axios.post(`${BASE_URL}student/createStudent`, newValues, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      popUpIsClosed();
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      notify();
+      actions.resetForm();
+      getData();
+    } catch (error) {
+      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
+      notify();
+    }
   }
 
   // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      studentName: "",
-      studentMajor: "محاسبة",
-      yearId: "اولي"
+      nationalId: "",
+      name: "",
+      gender: "",
+      universityId: "",
+      phoneNumber: "",
+      email: "",
+      yearId: ""
     },
     validationSchema: PopUpStudentsSchema,
     onSubmit
@@ -39,11 +96,29 @@ const PopUpStudents = ({ setRow }) => {
       </span>
       <div className='flex'>
         <input
+          type="number"
+          name='nationalId'
+          placeholder='رقم البطاقة (14 رقم)'
+          value={values.nationalId}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <FaIdCard />
+        </div>
+      </div>
+      {
+        errors.nationalId && touched.nationalId &&
+        <p className='error text-[#dc3545]'>{errors.nationalId}</p>
+      }
+      <div className='flex'>
+        <input
           className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='studentName'
+          name='name'
           placeholder='اسم الطالب'
-          value={values.studentName}
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -52,27 +127,81 @@ const PopUpStudents = ({ setRow }) => {
         </div>
       </div>
       {
-        errors.studentName && touched.studentName &&
-        <p className='error text-[#dc3545]'>{errors.studentName}</p>
+        errors.name && touched.name &&
+        <p className='error text-[#dc3545]'>{errors.name}</p>
       }
       <div className='relative'>
         <select
-          name="studentMajor"
-          value={values.studentMajor}
+          name="gender"
+          value={values.gender}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
+          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3 cursor-pointer`}
         >
-          <option value="محاسبة">محاسبة</option>
-          <option value="تسويق">تسويق</option>
+          <option value="Male">ولد</option>
+          <option value="Female">بنت</option>
         </select>
         <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
           <IoMdArrowDropdown />
         </div>
       </div>
       {
-        errors.studentMajor && touched.studentMajor &&
-        <p className='error text-[#dc3545]'>{errors.studentMajor}</p>
+        errors.gender && touched.gender &&
+        <p className='error text-[#dc3545]'>{errors.gender}</p>
+      }
+      <div className='flex'>
+        <input
+          type="number"
+          name='universityId'
+          placeholder='رقم الجلوس'
+          value={values.universityId}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <TbNumbers />
+        </div>
+      </div>
+      {
+        errors.universityId && touched.universityId &&
+        <p className='error text-[#dc3545]'>{errors.universityId}</p>
+      }
+      <div className='flex'>
+        <input
+          type="number"
+          name='phoneNumber'
+          placeholder='رقم الهاتف'
+          value={values.phoneNumber}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <TbNumbers />
+        </div>
+      </div>
+      {
+        errors.phoneNumber && touched.phoneNumber &&
+        <p className='error text-[#dc3545]'>{errors.phoneNumber}</p>
+      }
+      <div className='flex'>
+        <input
+          type="email"
+          name='email'
+          placeholder='البريد الالكتروني'
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <MdEmail />
+        </div>
+      </div>
+      {
+        errors.email && touched.email &&
+        <p className='error text-[#dc3545]'>{errors.email}</p>
       }
       <div className='relative'>
         <select
@@ -80,12 +209,13 @@ const PopUpStudents = ({ setRow }) => {
           value={values.yearId}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
+          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3 cursor-pointer`}
         >
-          <option value="اولي">اولي</option>
-          <option value="ثانية">ثانية</option>
-          <option value="ثالثة">ثالثة</option>
-          <option value="رابعة">رابعة</option>
+          {
+            years.map((year, index) => (
+              <option key={yearId[index]} value={yearId[index]}>{year}</option>
+            ))
+          }
         </select>
         <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
           <IoMdArrowDropdown />

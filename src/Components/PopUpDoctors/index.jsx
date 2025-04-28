@@ -1,26 +1,53 @@
 import { useFormik } from 'formik';
 import { IoClose } from "react-icons/io5";
 import { BsAlphabet } from "react-icons/bs";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { TbNumbers } from "react-icons/tb";
+import { FaIdCard } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 import { PopUpDoctorsSchema } from './PopUpDoctorsSchema';
 import { useStore } from '../../Store';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
 
-const PopUpDoctors = ({ setRow }) => {
-  // PopUp Toggle
-  const { popUpIsClosed } = useStore();
+const PopUpDoctors = ({ getData }) => {
+  const { BASE_URL, token, popUpIsClosed } = useStore();
+  const { mSection } = useParams();
 
   // form on submit function
-  const onSubmit = (values, actions) => {
-    setRow((prev) => [values, ...prev,]);
-    popUpIsClosed()
-    actions.resetForm();
+  const onSubmit = async (values, actions) => {
+    const newValues = {
+      ...values,
+      nationalId: `${values.nationalId}`,
+      phoneNumber: `0${values.phoneNumber}`,
+      sectionName: `${mSection}`,
+    }
+    try {
+      const res = await axios.post(`${BASE_URL}doctor/createDoctor`, newValues, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      popUpIsClosed();
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      notify();
+      actions.resetForm();
+      getData();
+    } catch (error) {
+      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
+      notify();
+    }
+    console.log(newValues)
   }
 
   // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      doctorName: "",
-      doctorMajor: "محاسبة",
+      nationalId: "",
+      name: "",
+      major: "",
+      phoneNumber: "",
+      email: "",
     },
     validationSchema: PopUpDoctorsSchema,
     onSubmit
@@ -38,11 +65,29 @@ const PopUpDoctors = ({ setRow }) => {
       </span>
       <div className='flex'>
         <input
+          type="number"
+          name='nationalId'
+          placeholder='رقم البطاقة (14 رقم)'
+          value={values.nationalId}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <FaIdCard />
+        </div>
+      </div>
+      {
+        errors.nationalId && touched.nationalId &&
+        <p className='error text-[#dc3545]'>{errors.nationalId}</p>
+      }
+      <div className='flex'>
+        <input
           className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='doctorName'
+          name='name'
           placeholder='اسم الدكتور'
-          value={values.doctorName}
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -51,27 +96,62 @@ const PopUpDoctors = ({ setRow }) => {
         </div>
       </div>
       {
-        errors.doctorName && touched.doctorName &&
-        <p className='error text-[#dc3545]'>{errors.doctorName}</p>
+        errors.name && touched.name &&
+        <p className='error text-[#dc3545]'>{errors.name}</p>
       }
-      <div className='relative'>
-        <select
-          name="doctorMajor"
-          value={values.doctorMajor}
+      <div className='flex'>
+        <input
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+          type="text"
+          name='major'
+          placeholder='التخصص الدراسي'
+          value={values.major}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
-        >
-          <option value="محاسبة">محاسبة</option>
-          <option value="تسويق">تسويق</option>
-        </select>
-        <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
-          <IoMdArrowDropdown />
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <BsAlphabet />
         </div>
       </div>
       {
-        errors.doctorMajor && touched.doctorMajor &&
-        <p className='error text-[#dc3545]'>{errors.doctorMajor}</p>
+        errors.major && touched.major &&
+        <p className='error text-[#dc3545]'>{errors.major}</p>
+      }
+      <div className='flex'>
+        <input
+          type="number"
+          name='phoneNumber'
+          placeholder='رقم الهاتف'
+          value={values.phoneNumber}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <TbNumbers />
+        </div>
+      </div>
+      {
+        errors.phoneNumber && touched.phoneNumber &&
+        <p className='error text-[#dc3545]'>{errors.phoneNumber}</p>
+      }
+      <div className='flex'>
+        <input
+          type="email"
+          name='email'
+          placeholder='البريد الالكتروني'
+          value={values.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <MdEmail />
+        </div>
+      </div>
+      {
+        errors.email && touched.email &&
+        <p className='error text-[#dc3545]'>{errors.email}</p>
       }
       <button
         disabled={isSubmitting}

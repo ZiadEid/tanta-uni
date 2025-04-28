@@ -4,23 +4,54 @@ import { BsAlphabet } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { PopUpSectionsSchema } from './PopUpSectionsSchema';
 import { useStore } from '../../Store';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
-const PopUpSections = ({ setRow }) => {
-  // PopUp Toggle
-  const { popUpIsClosed } = useStore();
+const PopUpSections = ({ getData }) => {
+  const { BASE_URL, popUpIsClosed } = useStore();
+  const [years, setYears] = useState([]);
+  const [id, setId] = useState([]);
+  const getYears = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}year/findAll`);
+      const newYears = [];
+      const newId = [];
+      res.data.years.forEach((el) => {
+        newYears.push(el.name);
+        newId.push(el._id);
+      })
+      setYears(newYears);
+      setId(newId);
+    } catch (error) {
+      console.log(error);
+      // navigate("/error")
+    }
+  }
+  useEffect(() => {
+    getYears();
+  }, [])
 
   // form on submit function
-  const onSubmit = (values, actions) => {
-    setRow((prev) => [values, ...prev,]);
-    popUpIsClosed()
+  const onSubmit = async (values, actions) => {
+    try {
+      const res = await axios.post(`${BASE_URL}section/createSection`, values);
+      popUpIsClosed();
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      notify();
+      getData();
+    } catch (error) {
+      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
+      notify();
+    }
     actions.resetForm();
   }
 
   // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      sectionName: "",
-      sectionYear: "اولي",
+      name: "",
+      yearId: ""
     },
     validationSchema: PopUpSectionsSchema,
     onSubmit
@@ -40,9 +71,9 @@ const PopUpSections = ({ setRow }) => {
         <input
           className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='sectionName'
-          placeholder='اسم المادة'
-          value={values.sectionName}
+          name='name'
+          placeholder='اسم القسم'
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -51,29 +82,30 @@ const PopUpSections = ({ setRow }) => {
         </div>
       </div>
       {
-        errors.sectionName && touched.sectionName &&
-        <p className='error text-[#dc3545]'>{errors.sectionName}</p>
+        errors.name && touched.name &&
+        <p className='error text-[#dc3545]'>{errors.name}</p>
       }
       <div className='relative'>
         <select
-          name="sectionYear"
-          value={values.sectionYear}
+          name="yearId"
+          value={values.yearId}
           onChange={handleChange}
           onBlur={handleBlur}
           className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
         >
-          <option value="اولي">اولي</option>
-          <option value="ثانية">ثانية</option>
-          <option value="ثالثة">ثالثة</option>
-          <option value="رابعة">رابعة</option>
+          {
+            years.map((year, index) => (
+              <option key={id[index]} value={id[index]}>{year}</option>
+            ))
+          }
         </select>
         <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
           <IoMdArrowDropdown />
         </div>
       </div>
       {
-        errors.sectionYear && touched.sectionYear &&
-        <p className='error text-[#dc3545]'>{errors.sectionYear}</p>
+        errors.yearId && touched.yearId &&
+        <p className='error text-[#dc3545]'>{errors.yearId}</p>
       }
       <button
         disabled={isSubmitting}

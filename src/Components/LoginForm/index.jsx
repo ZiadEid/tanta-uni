@@ -5,29 +5,43 @@ import { FaIdCard } from "react-icons/fa6";
 import { MdOutlineLockOpen } from "react-icons/md";
 import { loginSchema } from './LoginSchema';
 import { useNavigate } from 'react-router-dom';
+import { useStore } from '../../Store';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const LoginForm = () => {
+  const { BASE_URL, setToken, setUserRole } = useStore();
   const navigate = useNavigate();
+
   // form on submit function
   const onSubmit = async (values, actions) => {
     // setIsLoading(true)
+    const realValues = {
+      ...values,
+      nationalId: `${values.nationalId}`
+    }
     try {
-      console.log(values)
-      actions.resetForm();
+      const res = await axios.post(`${BASE_URL}auth/userLogin`, realValues);
+      setToken(res.data.accessToken);
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
+      notify();
+    
+      // Delay the navigation
       setTimeout(() => {
-        navigate("/")
-      }, 300);
+        navigate("/");
+      }, 2100); // Delays for more than autoClose duration
+      
+      actions.resetForm();
+    } catch (error) {
+      toast.error(`${error.response.data.message}` || "An error occurred", { autoClose: 3000 });
     }
-    catch (error) {
-      // toast.error(error.response.data.message, { autoClose: 3000 });
-      // setIsLoading(false);
-    }
+    
   }
   // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       userType: 'employee',
-      nationalID: '',
+      nationalId: '',
       password: '',
     },
     validationSchema: loginSchema,
@@ -63,9 +77,9 @@ const LoginForm = () => {
         <div className='flex'>
           <input
             type="number"
-            name='nationalID'
+            name='nationalId'
             placeholder='رقم البطاقة (14 رقم)'
-            value={values.nationalID}
+            value={values.nationalId}
             onChange={handleChange}
             onBlur={handleBlur}
             className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
@@ -75,8 +89,8 @@ const LoginForm = () => {
           </div>
         </div>
         {
-          errors.nationalID && touched.nationalID &&
-          <p className='error text-[#dc3545]'>{errors.nationalID}</p>
+          errors.nationalId && touched.nationalId &&
+          <p className='error text-[#dc3545]'>{errors.nationalId}</p>
         }
         <div className='flex'>
           <input

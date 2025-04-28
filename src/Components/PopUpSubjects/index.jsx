@@ -5,28 +5,102 @@ import { TbNumbers } from "react-icons/tb";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { PopUpSubjectsSchema } from './PopUpSubjectsSchema';
 import { useStore } from '../../Store';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-const PopUpSubjects = ({ setRow }) => {
-  // PopUp Toggle
-  const { popUpIsClosed } = useStore();
+const PopUpSubjects = ({ getData }) => {
+  const { BASE_URL, token, popUpIsClosed } = useStore();
+  const { mSection } = useParams();
+
+  const [years, setYears] = useState([]);
+  const [yearId, setYearId] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [doctorId, setDoctorId] = useState([]);
+
+  const getYears = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}year/findAll/${mSection}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const newYears = [];
+      const newId = [];
+      res.data.years.forEach((el) => {
+        newYears.push(el.name);
+        newId.push(el._id);
+      })
+      setYears(newYears);
+      setYearId(newId);
+    } catch (error) {
+      console.log(error);
+      navigate("/error")
+    }
+  }
+
+  const getDoctors = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}doctor/findAll/${mSection}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const newDoctors = [];
+      const newId = [];
+      res.data.doctors.forEach((el) => {
+        newDoctors.push(el.name);
+        newId.push(el._id);
+      })
+      setDoctors(newDoctors);
+      setDoctorId(newId);
+    } catch (error) {
+      console.log(error);
+      navigate("/error")
+    }
+  }
+
+  useEffect(() => {
+    getYears();
+    getDoctors();
+  }, []);
 
   // form on submit function
-  const onSubmit = (values, actions) => {
-    setRow((prev) => [values, ...prev,]);
-    popUpIsClosed()
-    actions.resetForm();
+  const onSubmit = async (values, actions) => {
+    const newValues = {
+      ...values,
+      hoursNumber: `${values.hoursNumber}`,
+      highestDegree: `${values.highestDegree}`,
+      sectionName: `${mSection}`
+    }
+    try {
+      const res = await axios.post(`${BASE_URL}subject/createSubject`, newValues, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      popUpIsClosed();
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      notify();
+      actions.resetForm();
+      getData();
+    } catch (error) {
+      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
+      notify();
+    }
   }
 
   // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      subjectName: "",
-      subjectCode: "",
+      name: "",
+      term: "",
+      code: "",
       hoursNumber: "",
       highestDegree: "",
-      doctorId: "محمد عبدالسميع",
-      sectionId: "محاسبة",
-      yearId: "اولي"
+      doctorId: "",
+      yearId: ""
     },
     validationSchema: PopUpSubjectsSchema,
     onSubmit
@@ -46,9 +120,9 @@ const PopUpSubjects = ({ setRow }) => {
         <input
           className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='subjectName'
+          name='name'
           placeholder='اسم المادة'
-          value={values.subjectName}
+          value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -57,16 +131,35 @@ const PopUpSubjects = ({ setRow }) => {
         </div>
       </div>
       {
-        errors.subjectName && touched.subjectName &&
-        <p className='error text-[#dc3545]'>{errors.subjectName}</p>
+        errors.name && touched.name &&
+        <p className='error text-[#dc3545]'>{errors.name}</p>
+      }
+      <div className='relative'>
+        <select
+          name="term"
+          value={values.term}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3 cursor-pointer`}
+        >
+          <option value="FirstTerm">الترم الاول</option>
+          <option value="SecondTerm">الترم الثاني</option>
+        </select>
+        <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
+          <IoMdArrowDropdown />
+        </div>
+      </div>
+      {
+        errors.term && touched.term &&
+        <p className='error text-[#dc3545]'>{errors.term}</p>
       }
       <div className='flex'>
         <input
           className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='subjectCode'
+          name='code'
           placeholder='كود المادة'
-          value={values.subjectCode}
+          value={values.code}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -75,8 +168,8 @@ const PopUpSubjects = ({ setRow }) => {
         </div>
       </div>
       {
-        errors.subjectCode && touched.subjectCode &&
-        <p className='error text-[#dc3545]'>{errors.subjectCode}</p>
+        errors.code && touched.code &&
+        <p className='error text-[#dc3545]'>{errors.code}</p>
       }
       <div className='flex'>
         <input
@@ -120,11 +213,13 @@ const PopUpSubjects = ({ setRow }) => {
           value={values.doctorId}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
+          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3 cursor-pointer`}
         >
-          <option value="محمد عبدالسميع">محمد عبدالسميع</option>
-          <option value="محمود اسماعيل">محمود اسماعيل</option>
-          <option value="ربيع منصور">ربيع منصور</option>
+          {
+            doctors.map((doctor, index) => (
+              <option key={doctorId[index]} value={doctorId[index]}>{doctor}</option>
+            ))
+          }
         </select>
         <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
           <IoMdArrowDropdown />
@@ -136,35 +231,17 @@ const PopUpSubjects = ({ setRow }) => {
       }
       <div className='relative'>
         <select
-          name="sectionId"
-          value={values.sectionId}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
-        >
-          <option value="محاسبة">محاسبة</option>
-          <option value="تسويق">تسويق</option>
-        </select>
-        <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
-          <IoMdArrowDropdown />
-        </div>
-      </div>
-      {
-        errors.sectionId && touched.sectionId &&
-        <p className='error text-[#dc3545]'>{errors.sectionId}</p>
-      }
-      <div className='relative'>
-        <select
           name="yearId"
           value={values.yearId}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
+          className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3 cursor-pointer`}
         >
-          <option value="اولي">اولي</option>
-          <option value="ثانية">ثانية</option>
-          <option value="ثالثة">ثالثة</option>
-          <option value="رابعة">رابعة</option>
+          {
+            years.map((year, index) => (
+              <option key={yearId[index]} value={yearId[index]}>{year}</option>
+            ))
+          }
         </select>
         <div className='absolute top-1/2 -translate-y-1/2 end-[10px] pointer-events-none'>
           <IoMdArrowDropdown />

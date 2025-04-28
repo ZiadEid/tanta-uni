@@ -4,7 +4,7 @@ export const loginSchema = yup.object().shape({
   userType: yup
     .string()
     .required(),
-  nationalID: yup
+  nationalId: yup
     .string()
     .length(14, 'لا يجب ان تقل او تزيد عن 14 رقم')
     .required("رقم البطاقة مطلوب"),

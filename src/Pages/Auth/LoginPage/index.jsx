@@ -1,8 +1,18 @@
 import { useEffect } from 'react';
 import LoginForm from '../../../Components/LoginForm';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { useStore } from '../../../Store';
 
 const LoginPage = () => {
+  const { token } = useStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      navigate("/")
+    }
+  }, [])
+  // catch theme preference
   const location = useLocation();
   useEffect(() => {
     if (location.pathname === '/login') {
@@ -19,6 +29,7 @@ const LoginPage = () => {
   return (
     <div className='flex justify-center items-center min-h-screen bg-[#fcfcfc] dark:bg-gray-900 p-2'>
       <LoginForm />
+      <ToastContainer />
     </div>
   )
 }

@@ -1,21 +1,25 @@
 import * as yup from 'yup';
 
 export const PopUpSubjectsSchema = yup.object().shape({
-  subjectName: yup
+  name: yup
     .string()
     .required("اسم المادة مطلوب"),
-    subjectCode: yup
+  term: yup
+    .string()
+    .required("الفصل الدراسي مطلوب"),
+  code: yup
     .string()
     .required("كود المادة مطلوب"),
-    hoursNumber: yup
+  hoursNumber: yup
     .string()
     .required("عدد ساعات المادة مطلوب"),
-    highestDegree: yup
-    .string(),
-    doctorId: yup
-    .string(),
-    sectionId: yup
-    .string(),
-    yearId: yup
-    .string(),
+  highestDegree: yup
+    .string()
+    .required(),
+  doctorId: yup
+    .string()
+    .required(),
+  yearId: yup
+    .string()
+    .required(),
 })

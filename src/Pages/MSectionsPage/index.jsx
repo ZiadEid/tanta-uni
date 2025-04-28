@@ -24,6 +24,9 @@ const MSectionsPage = () => {
     }
   }
   useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
     getData();
     sectionsActive();
   }, []);

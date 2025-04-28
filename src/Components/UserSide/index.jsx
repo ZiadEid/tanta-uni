@@ -18,10 +18,10 @@ const UserSide = ({ mSection }) => {
           <img className="shrink-0 w-10 h-10 border-2 border-white dark:border-gray-400 md:rounded-full rounded-lg bg-black" src={userImg} alt="بروفيل" />
           <div className="content">
             <h2 className="text-sm font-medium uppercase tracking-wide text-gray-900 dark:text-white hidden md:block shrink-0">
-              {user.name}
+              {user?.name}
             </h2>
             <span className="mt-1 text-xs text-gray-600 dark:text-gray-300 hidden md:block shrink-0">
-              {user.role}
+              {user?.role}
             </span>
           </div>
         </Link>

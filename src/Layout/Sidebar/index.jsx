@@ -43,7 +43,7 @@ const Sidebar = () => {
           ?
           <EmployeeSide mSection={mSection} />
           :
-          user.role === "doctor"
+          user && user.role === "doctor"
           ?
           <DoctorsSide />
           :

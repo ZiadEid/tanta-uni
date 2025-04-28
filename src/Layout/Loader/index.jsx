@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useStore } from "../../Store";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Loader = () => {
+  const navigate = useNavigate();
   const { BASE_URL, token, setUser } = useStore();
-  
+
   const getUser = async () => {
     let newUser = {}
     try {
@@ -26,8 +28,11 @@ const Loader = () => {
       console.log(error)
     }
   }
-  
-  useEffect(()=> {
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
     getUser();
   }, [])
 

@@ -147,7 +147,7 @@ const StudyYearsPage = () => {
                   ?
                   <>
                     <Table
-                      headers={["#", "السـنة الدراسية", ""]}
+                      headers={["#", "السـنة الدراسية", "", "المصاريف"]}
                       tableData={filterdYears.length == 0 ? years : filterdYears}
                       id={id}
                       deleteRow={deleteRow}

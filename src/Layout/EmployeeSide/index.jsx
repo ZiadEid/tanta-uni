@@ -58,15 +58,6 @@ const EmployeeSide = () => {
           الطلاب
         </span>
       </Link>
-      <Link
-        to={`/${mSection}/finance`}
-        className={`p-2 outline-0 ${pageName == "finance" ? "bg-[#2a52be] text-white text-lg" : "text-gray-500 hover:text-[#2a52be] hover:ps-3 dark:hover:text-white duration-150"} text-md rounded-lg flex ${!closeSide && "md:justify-center lg:justify-center"} justify-center md:justify-start items-center gap-2`}
-      >
-        <RiMoneyDollarCircleFill />
-        <span className={`${!closeSide && "md:hidden"} hidden md:block shrink-0`}>
-          مصاريف
-        </span>
-      </Link>
     </ul>
   )
 }

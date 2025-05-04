@@ -16,7 +16,6 @@ const MarkesPage = () => {
   const {
     BASE_URL,
     token,
-    markesActive,
     popUpUpdateToggel,
     popUpUpdateIsClosed
 
@@ -60,7 +59,6 @@ const MarkesPage = () => {
 
   useEffect(() => {
     getData();
-    markesActive();
   }, []);
 
   // get degree
@@ -79,7 +77,7 @@ const MarkesPage = () => {
       navigate("/error");
     }
   }
-  
+
   return (
     <div className="grow relative">
       {

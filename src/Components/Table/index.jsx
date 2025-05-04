@@ -30,25 +30,25 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
     <div className='w-full px-6'>
       {
         confirmationPopUpToggel
-         ?
-         confirmationType === "delete"
           ?
-          <div
-            onClick={confirmationPopUpIsClosed}
-            className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
-          >
-            <Confirmation id={actionIndex} type="المسح" passedFunction={deleteRow} />
-          </div>
-          :
-          <div
-            onClick={confirmationPopUpIsClosed}
-            className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
-          >
-            <Confirmation id={actionIndex} type="التعديل" passedFunction={() => {
-              popUpUpdateIsOpen();
-              confirmationPopUpIsClosed();
-            }} />
-          </div>
+          confirmationType === "delete"
+            ?
+            <div
+              onClick={confirmationPopUpIsClosed}
+              className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
+            >
+              <Confirmation id={actionIndex} type="المسح" passedFunction={deleteRow} />
+            </div>
+            :
+            <div
+              onClick={confirmationPopUpIsClosed}
+              className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
+            >
+              <Confirmation id={actionIndex} type="التعديل" passedFunction={() => {
+                popUpUpdateIsOpen();
+                confirmationPopUpIsClosed();
+              }} />
+            </div>
           :
           ""
       }
@@ -157,6 +157,18 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
                             <FaEye />
                           </Link>
                         </div>
+                      </td>
+                    }
+                    {
+                      pageName === "studyYears"
+                      &&
+                      <td className="">
+                        <Link
+                          to={`${id[index]}/finance`}
+                          className="text-lg py-6 px-4 text-blue-600 block w-fit ms-4"
+                        >
+                          <FaEye />
+                        </Link>
                       </td>
                     }
                   </tr>

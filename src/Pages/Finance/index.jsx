@@ -46,7 +46,6 @@ const Finance = () => {
 
   useEffect(() => {
     getData();
-    financeActive();
   }, []);
 
   // Delete Finance

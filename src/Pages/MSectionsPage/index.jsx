@@ -97,6 +97,8 @@ const MSectionsPage = () => {
           </div>
         }
         {
+          mSections
+          &&
           mSections.map((section) => (
             <MSectionsCard key={section._id} id={section._id} getOneData={getSection} name={section.name} />
           ))

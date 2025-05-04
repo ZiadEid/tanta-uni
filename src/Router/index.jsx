@@ -58,12 +58,25 @@ const Router = () => {
                   />
                   <Route
                     path="study-years"
-                    element={
-                      <LayoutWraper>
-                        <StudyYearsPage />
-                      </LayoutWraper>
-                    }
-                  />
+                  >
+                    <Route
+                      index
+                      element={
+                        <LayoutWraper>
+                          <StudyYearsPage />
+                        </LayoutWraper>
+                      }
+                    />
+                    <Route
+                      path=":yearId/finance"
+                      element={
+                        <LayoutWraper>
+                          <Finance />
+                        </LayoutWraper>
+                      }
+                    />
+
+                  </Route>
                   <Route
                     path="sections"
                     element={
@@ -89,14 +102,6 @@ const Router = () => {
                         element={
                           <LayoutWraper>
                             <SingleSubject />
-                          </LayoutWraper>
-                        }
-                      />
-                      <Route
-                        path="markes"
-                        element={
-                          <LayoutWraper>
-                            <MarkesPage />
                           </LayoutWraper>
                         }
                       />

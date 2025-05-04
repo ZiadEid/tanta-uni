@@ -8,16 +8,21 @@ import PopUpSubjects from '../../Components/PopUpSubjects';
 import SubmitSheet from '../../Components/SubmitSheet';
 import SearchInput from '../../Components/SearchInput';
 import AddNewBtn from '../../Components/AddNewBtn';
+import NoContent from '../../Components/NoContent';
+import Loader from '../../Layout/Loader';
 
 const SingleSubject = () => {
   const navigate = useNavigate();
-  const { subjectsId } = useParams()
+  const { subjectsName } = useParams()
+  // Global State
   const { BASE_URL, token, singleSubjectActive } = useStore();
+  // Local State
+  const [loader, setLoader] = useState(true);
   const [marks, setMarks] = useState([]);
   const [id, setId] = useState([]);
   const getData = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}subject/getSubjectStudents/${subjectsId}`, {
+      const res = await axios.get(`${BASE_URL}subject/getSubjectStudents/${subjectsName}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -26,13 +31,16 @@ const SingleSubject = () => {
       const newId = [];
       res.data.students.forEach((el) => {
         newMarks.push({
-          name: el.name,
-          universityId: el.universityId,
+          name: el.studentId.name,
+          universityId: el.studentId.universityId,
         });
-        newId.push(el._id);
+        newId.push(el.studentId._id);
       })
       setMarks(newMarks);
       setId(newId);
+      setTimeout(() => {
+        setLoader(false);
+      }, 200);
     } catch (error) {
       navigate("/error")
     }
@@ -45,20 +53,32 @@ const SingleSubject = () => {
   }, []);
 
   return (
-    <div>
-      {/* <div
-        className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2 px-6 mt-2"
-      >
-        <SearchInput />
-        <AddNewBtn />
-      </div> */}
-      <SubmitSheet
-        getData={getData}
-        headers={["#", "الطالب", "رقم الجلوس", "الدرجة"]}
-        tableData={marks}
-        id={id}
-      />
-      <ToastContainer />
+    <div className='grow relative'>
+      {
+        loader
+          ?
+          <Loader />
+          :
+          <>
+            {
+              marks.length !== 0
+                ?
+                <div className='flex justify-center items-center'>
+                  <SubmitSheet
+                    getData={getData}
+                    headers={["#", "الطالب", "رقم الجلوس", "الدرجة"]}
+                    tableData={marks}
+                    id={id}
+                  />
+                  <ToastContainer />
+                </div>
+                :
+                <div className="h-full flex justify-center items-center">
+                  <NoContent data="طلاب لهذه المادة" />
+                </div>
+            }
+          </>
+      }
     </div>
   )
 }

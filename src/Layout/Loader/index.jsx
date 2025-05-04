@@ -1,43 +1,11 @@
-import { useEffect, useState } from "react";
-import { useStore } from "../../Store";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import style from "./index.module.css";
 
 const Loader = () => {
-  const navigate = useNavigate();
-  const { BASE_URL, token, setUser } = useStore();
-
-  const getUser = async () => {
-    let newUser = {}
-    try {
-      const res = await axios.get(`${BASE_URL}auth/userData`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      newUser = {
-        role: res.data.role,
-        id: res.data.data._id,
-        name: res.data.data.name,
-        nationalId: res.data.data.nationalId,
-        phoneNumber: res.data.data.phoneNumber,
-        email: res.data.data.email,
-      }
-      setUser(newUser)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    }
-    getUser();
-  }, [])
 
   return (
-    <div>Loader</div>
+    <div className="absolute top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] dark:bg-gray-900 backdrop-blur">
+      <span className={`${style.loader}`}></span>
+    </div>
   )
 }
 

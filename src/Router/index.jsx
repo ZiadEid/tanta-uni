@@ -13,18 +13,17 @@ import SingleSubject from "../Pages/SingleSubject";
 import MarkesPage from "../Pages/MarkesPage";
 import { useStore } from "../Store";
 import DoctorSubjects from "../Pages/DoctorSubjects";
-import Loader from "../Layout/Loader";
+import LayoutLoader from "../Layout/LayoutLoader";
+import Finance from "../Pages/Finance";
 
 const Router = () => {
   const { user, token } = useStore();
 
   if (token && !user) {
     return (
-      <Loader />
+      <LayoutLoader />
     )
   }
-
-
 
   return (
     <BrowserRouter>
@@ -83,7 +82,7 @@ const Router = () => {
                       }
                     />
                     <Route
-                      path=":subjectsId"
+                      path=":subjectsName"
                     >
                       <Route
                         index
@@ -119,28 +118,51 @@ const Router = () => {
                       </LayoutWraper>
                     }
                   />
+                  <Route
+                    path="finance"
+                    element={
+                      <LayoutWraper>
+                        <Finance />
+                      </LayoutWraper>
+                    }
+                  />
                 </Route>
                 :
-                <Route
-                  path="/doctorSubject"
-                >
+                user.role === "doctor"
+                  ?
                   <Route
-                    index
-                    element={
-                      <LayoutWraper>
-                        <DoctorSubjects />
-                      </LayoutWraper>
-                    }
-                  />
+                    path="/doctor-subjects"
+                  >
+                    <Route
+                      index
+                      element={
+                        <LayoutWraper>
+                          <DoctorSubjects />
+                        </LayoutWraper>
+                      }
+                    />
+                    <Route
+                      path=":subjectsId"
+                      element={
+                        <LayoutWraper>
+                          <MarkesPage />
+                        </LayoutWraper>
+                      }
+                    />
+                  </Route>
+                  :
                   <Route
-                    path=":subjectsId"
-                    element={
-                      <LayoutWraper>
-                        <MarkesPage />
-                      </LayoutWraper>
-                    }
-                  />
-                </Route>
+                    path="/:yearName"
+                  >
+                    <Route
+                      index
+                      element={
+                        <LayoutWraper>
+                          <MarkesPage />
+                        </LayoutWraper>
+                      }
+                    />
+                  </Route>
             }
           </Route>
         }
@@ -149,7 +171,9 @@ const Router = () => {
           path="/error"
           element={
             <LayoutWraper>
-              <Error />
+              <Error
+                message="حدث خطاء اثناء التحميل تفقد الانترنت او حاول تسجيل الدخول مره اخري!"
+              />
             </LayoutWraper>
           }
         />
@@ -157,7 +181,9 @@ const Router = () => {
           path="*"
           element={
             <LayoutWraper>
-              <Error />
+              <Error
+                message="تعذر الوصول للصفحة التي تبحث عنها، ربما تغير اسمها او لم تكن موجودة من الاساس"
+              />
             </LayoutWraper>
           }
         />

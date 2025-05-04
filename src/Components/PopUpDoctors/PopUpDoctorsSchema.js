@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 
+const numbers = /^[0-9]+$/;
+
 export const PopUpDoctorsSchema = yup.object().shape({
   nationalId: yup
     .string()
@@ -13,6 +15,8 @@ export const PopUpDoctorsSchema = yup.object().shape({
     .required("تخصص الدكتور مطلوب"),
   phoneNumber: yup
     .string()
+    .matches(numbers, "لا يسمح الا بالارقام")
+    .length(11, 'لا يجب ان يزيد او يقل عن 11 رقم')
     .required("رقم الهاتف مطلوب"),
   email: yup
     .string()

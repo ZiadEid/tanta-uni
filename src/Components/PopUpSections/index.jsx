@@ -7,11 +7,16 @@ import { useStore } from '../../Store';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const PopUpSections = ({ getData }) => {
+  const navigate = useNavigate();
+  // Global State
   const { BASE_URL, popUpIsClosed } = useStore();
-  const [years, setYears] = useState([]);
+  // Local State
   const [id, setId] = useState([]);
+  const [years, setYears] = useState([]);
+  
   const getYears = async () => {
     try {
       const res = await axios.get(`${BASE_URL}year/findAll`);
@@ -24,8 +29,7 @@ const PopUpSections = ({ getData }) => {
       setYears(newYears);
       setId(newId);
     } catch (error) {
-      console.log(error);
-      // navigate("/error")
+      navigate("/error")
     }
   }
   useEffect(() => {
@@ -34,12 +38,17 @@ const PopUpSections = ({ getData }) => {
 
   // form on submit function
   const onSubmit = async (values, actions) => {
+    const newValues = {
+      ...values,
+      yearId: values.yearId === "undefined" ? id[0] : values.yearId,
+    }
     try {
-      const res = await axios.post(`${BASE_URL}section/createSection`, values);
-      popUpIsClosed();
-      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
-      notify();
-      getData();
+      // const res = await axios.post(`${BASE_URL}section/createSection`, values);
+      // popUpIsClosed();
+      // const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
+      // notify();
+      // getData();
+      console.log(newValues)
     } catch (error) {
       const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
       notify();
@@ -51,7 +60,7 @@ const PopUpSections = ({ getData }) => {
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       name: "",
-      yearId: ""
+      yearId: `${id[0]}`
     },
     validationSchema: PopUpSectionsSchema,
     onSubmit
@@ -59,6 +68,7 @@ const PopUpSections = ({ getData }) => {
 
   return (
     <form
+      onClick={(e) => { e.stopPropagation() }}
       onSubmit={handleSubmit}
       className='max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative'>
       <span
@@ -110,7 +120,7 @@ const PopUpSections = ({ getData }) => {
       <button
         disabled={isSubmitting}
         type='submit'
-        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer'
+        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer outline-none'
       >
         submit
       </button>

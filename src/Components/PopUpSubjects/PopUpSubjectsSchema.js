@@ -9,6 +9,7 @@ export const PopUpSubjectsSchema = yup.object().shape({
     .required("الفصل الدراسي مطلوب"),
   code: yup
     .string()
+    .length(4, 'لا يجب ان يزيد عن اربعة ارقام')
     .required("كود المادة مطلوب"),
   hoursNumber: yup
     .string()

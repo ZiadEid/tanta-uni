@@ -1,5 +1,7 @@
 import * as yup from 'yup';
 
+const numbers = /^[0-9]+$/;
+
 export const PopUpStudentsSchema = yup.object().shape({
   nationalId: yup
     .string()
@@ -13,10 +15,16 @@ export const PopUpStudentsSchema = yup.object().shape({
     .required("جنس الطالب مطلوب"),
   universityId: yup
     .string()
+    .length(4, 'لا يجب ان يزيد عن اربعة ارقام')
     .required("كود الجامعة مطلوب"),
   phoneNumber: yup
     .string()
+    .matches(numbers, "لا يسمح الا بالارقام")
+    .length(11, 'لا يجب ان يزيد او يقل عن 11 رقم')
     .required("رقم الهاتف مطلوب"),
+  hourCost: yup
+    .string()
+    .required("سعر الساعة مطلوب"),
   email: yup
     .string()
     .required("البريد الالكتروني مطلوب"),

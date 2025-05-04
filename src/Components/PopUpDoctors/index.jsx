@@ -11,15 +11,15 @@ import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 
 const PopUpDoctors = ({ getData }) => {
-  const { BASE_URL, token, popUpIsClosed } = useStore();
   const { mSection } = useParams();
+  const { BASE_URL, token, popUpIsClosed } = useStore();
 
   // form on submit function
   const onSubmit = async (values, actions) => {
     const newValues = {
       ...values,
       nationalId: `${values.nationalId}`,
-      phoneNumber: `0${values.phoneNumber}`,
+      phoneNumber: `${values.phoneNumber}`,
       sectionName: `${mSection}`,
     }
     try {
@@ -28,16 +28,15 @@ const PopUpDoctors = ({ getData }) => {
           Authorization: `Bearer ${token}`
         }
       });
-      popUpIsClosed();
-      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
       notify();
       actions.resetForm();
+      popUpIsClosed();
       getData();
     } catch (error) {
       const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
       notify();
     }
-    console.log(newValues)
   }
 
   // formik hook for handling login form actions
@@ -55,6 +54,7 @@ const PopUpDoctors = ({ getData }) => {
 
   return (
     <form
+      onClick={(e) => { e.stopPropagation() }}
       onSubmit={handleSubmit}
       className='max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative'>
       <span
@@ -119,7 +119,7 @@ const PopUpDoctors = ({ getData }) => {
       }
       <div className='flex'>
         <input
-          type="number"
+          type="text"
           name='phoneNumber'
           placeholder='رقم الهاتف'
           value={values.phoneNumber}
@@ -156,7 +156,7 @@ const PopUpDoctors = ({ getData }) => {
       <button
         disabled={isSubmitting}
         type='submit'
-        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer'
+        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer outline-none'
       >
         submit
       </button>

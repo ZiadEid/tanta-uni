@@ -1,19 +1,20 @@
-import { useParams } from "react-router-dom";
-import { useStore } from "../../Store";
 import style from "./index.module.css";
-import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2";
+import Confirmation from './../Confirmation/';
+import { useParams } from "react-router-dom";
 import { useRef, useState } from "react";
-import axios from "axios";
+import { useStore } from "../../Store";
+import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const SubmitSheet = ({ getData, headers, tableData, id }) => {
-  const { BASE_URL, token, singleSubject } = useStore();
   const { subjectsId } = useParams();
+  const { BASE_URL, token, singleSubject, confirmationPopUpToggel, confirmationPopUpIsOpen, confirmationPopUpIsClosed } = useStore();
   const [studentDegrees, setStudentDegrees] = useState([]);
   const inputRefs = useRef([]);
 
   const collectValues = () => {
-    const inputValues = inputRefs.current.map((input) => input?.value || "0");
+    const inputValues = inputRefs.current.map(el => el.value || "0");
     const newvalues = []
     id.forEach((id, index) => {
       newvalues.push({
@@ -26,54 +27,56 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
 
   const postDegree = async () => {
     const values = {
-      subjectId: subjectsId,
-      highestDegree: singleSubject.highestDegree,
+      subjectId: `${subjectsId}`,
+      highestDegree: `${singleSubject.highestDegree}`,
       studentDegrees: studentDegrees,
     }
-
-    console.log(values)
-
     try {
       const res = await axios.post(`${BASE_URL}degree/createDegree`, values, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
       notify();
       getData();
+      confirmationPopUpIsClosed();
     } catch (error) {
       const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
       notify();
-      
+      confirmationPopUpIsClosed();
     }
   }
 
   return (
-    <div className='px-6 mt-2'>
+    <div className='w-full px-6 mt-2'>
+      {
+        confirmationPopUpToggel &&
+        <div
+          onClick={confirmationPopUpIsClosed}
+          className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
+        >
+          <Confirmation id={null} type="رفع الدرجات" passedFunction={postDegree} />
+        </div>
+      }
       <div>
-        <div className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2">
+        <div className="actions flex md:flex-row md:justify-between md:items-end flex-col gap-2">
           <div>
             <p
               className="px-10 py-3 text-center md:text-start p-2 bg-gray-100 dark:bg-gray-800 shadow text-[#171e2e] dark:text-gray-300 rounded"
             >
-              <span>{singleSubject.name}</span> - <span>{singleSubject.highestDegree} درجة</span>
+              <span>{singleSubject.name}</span> - (<span className="text-sm">{singleSubject.highestDegree} درجة</span>)
             </p>
           </div>
           <div
-            onClick={() => collectValues()}
+            onClick={() => {
+              collectValues();
+              confirmationPopUpIsOpen();
+            }}
             className="addnew group flex items-center justify-center gap-4 bg-gray-100 dark:bg-gray-800 md:w-fit sm:w-full px-4 py-2 text-[#171e2e] dark:text-gray-400 rounded-lg border-2 border-gray-500 dark:border-gray-600 border-dashed cursor-pointer"
           >
             <span className="group-hover:text-gray-900 dark:group-hover:text-white duration-150">
               رفع الدرجات
-            </span>
-          </div>
-          <div
-            onClick={() => postDegree()}
-            className="addnew group flex items-center justify-center gap-4 bg-gray-100 dark:bg-gray-800 md:w-fit sm:w-full px-4 py-2 text-[#171e2e] dark:text-gray-400 rounded-lg border-2 border-gray-500 dark:border-gray-600 border-dashed cursor-pointer"
-          >
-            <span className="group-hover:text-gray-900 dark:group-hover:text-white duration-150">
-              تاكيد الدرجات
             </span>
           </div>
         </div>
@@ -101,7 +104,7 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
                     <td>
                       <input
                         className="text-sm px-4 py-6"
-                        ref={(input) => (inputRefs.current[0] = input)}
+                        ref={(input) => (inputRefs.current[index] = input)}
                         placeholder="0"
                       />
                     </td>

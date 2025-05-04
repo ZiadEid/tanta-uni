@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import style from "./index.module.css"
 import { FaBarsStaggered } from "react-icons/fa6";
 import { FaBars } from "react-icons/fa6";
 import { FaGraduationCap } from "react-icons/fa6";
@@ -6,15 +6,12 @@ import { useStore } from "../../Store";
 import UserSide from "../../Components/userSide";
 import EmployeeSide from "../EmployeeSide";
 import DoctorsSide from "../DoctorsSide";
+import StudentSide from "../StudentSide";
+import { Link } from "react-router-dom";
 
 
 const Sidebar = () => {
-  const { mSection } = useParams();
-  const {
-    closeSide,
-    setCloseSide,
-    user,
-  } = useStore();
+  const { closeSide, setCloseSide, user } = useStore();
 
   return (
     <div
@@ -32,23 +29,30 @@ const Sidebar = () => {
             <FaBars />
         }
       </div>
-      <div className="logo flex justify-center items-center gap-2 xl:text-xl lg:text-lg px-4 py-6">
+      <Link
+        to={"/"}
+        className="logo flex justify-center items-center gap-2 xl:text-xl lg:text-lg px-2 md:px-4 py-6"
+      >
         {closeSide && <h1 className="shrink-0 hidden md:block">Tanta University</h1>}
         <FaGraduationCap className="xl:text-5xl text-4xl text-[#2a52be] shrink-0" />
-      </div>
-      <div className="overflow-auto px-4">
-        <UserSide mSection={mSection} />
-        {
-          user && user.role === "employee"
-          ?
-          <EmployeeSide mSection={mSection} />
-          :
-          user && user.role === "doctor"
-          ?
-          <DoctorsSide />
-          :
-          <DoctorsSide />
-        }
+      </Link>
+      <div
+        className={`grow overflow-auto px-2 md:px-4 bg-[url('/Assets/side.jpg')] bg-cover bg-center relative before:content-[''] before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[#ffffffde] dark:before:bg-[#101828de]`}
+      >
+        <div className="relative">
+          <UserSide />
+          {
+            user && user.role === "employee"
+              ?
+              <EmployeeSide />
+              :
+              user && user.role === "doctor"
+                ?
+                <DoctorsSide />
+                :
+                <StudentSide />
+          }
+        </div>
       </div>
     </div>
   )

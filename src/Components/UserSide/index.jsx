@@ -1,18 +1,16 @@
-import { Link } from "react-router-dom";
-import userImg from "../../Assets/logo.png"
+import { Link, useParams } from "react-router-dom";
+import userImg from '/Assets/dabo.jpg';
 import { useStore } from "../../Store";
 
-const UserSide = ({ mSection }) => {
-  const {
-    closeSide,
-    user,
-  } = useStore();
+const UserSide = () => {
+  const { mSection } = useParams();
+  const { closeSide, user } = useStore();
   return (
     <>
       {
         closeSide &&
         <Link
-          to={`/${mSection}`}
+          to={user?.role === "employee" ? `/${mSection}` : `/`}
           className="user bg-gray-200 dark:bg-gray-800 p-px md:p-4 flex items-center gap-2 outline-0 rounded-lg mt-2 mb-4"
         >
           <img className="shrink-0 w-10 h-10 border-2 border-white dark:border-gray-400 md:rounded-full rounded-lg bg-black" src={userImg} alt="بروفيل" />
@@ -29,7 +27,7 @@ const UserSide = ({ mSection }) => {
       {
         !closeSide &&
         <Link
-          to={`/${mSection}`}
+          to={user?.role === "employee" ? `/${mSection}` : `/`}
           className="user outline-0 rounded-lg mt-2 mb-4"
         >
           <img

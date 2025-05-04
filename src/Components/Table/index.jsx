@@ -5,22 +5,58 @@ import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2
 import { FaEye, FaPlus } from "react-icons/fa";
 import { useStore } from "../../Store";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import Confirmation from "../Confirmation";
+import { useEffect, useState } from "react";
 
 
-const Table = ({ headers, tableData, id, deleteRow }) => {
-  const { user, setSingleSubject, pageName } = useStore();
-  useEffect(() => {
-    console.log(pageName)
-  }, [])
+const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) => {
+  // Global State
+  const {
+    user,
+    setSingleSubject,
+    pageName,
+    confirmationType,
+    confirmationDelete,
+    confirmationUpdate,
+    popUpUpdateIsOpen,
+    confirmationPopUpToggel,
+    confirmationPopUpIsClosed,
+    confirmationPopUpIsOpen,
+  } = useStore();
+  // Local State
+  const [actionIndex, setActionIndex] = useState(null);
 
   return (
-    <div className='px-6'>
+    <div className='w-full px-6'>
+      {
+        confirmationPopUpToggel
+         ?
+         confirmationType === "delete"
+          ?
+          <div
+            onClick={confirmationPopUpIsClosed}
+            className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
+          >
+            <Confirmation id={actionIndex} type="المسح" passedFunction={deleteRow} />
+          </div>
+          :
+          <div
+            onClick={confirmationPopUpIsClosed}
+            className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
+          >
+            <Confirmation id={actionIndex} type="التعديل" passedFunction={() => {
+              popUpUpdateIsOpen();
+              confirmationPopUpIsClosed();
+            }} />
+          </div>
+          :
+          ""
+      }
       <div>
         <div className="overflow-auto">
           <table className="min-w-[800px] table-auto w-full border-separate border-spacing-y-4">
             <thead>
-              <tr className={`${style.shadowCustomed} rounded bg-gray-100 dark:bg-gray-800 shadow-lg text-gray-800 dark:text-gray-300`}>
+              <tr className={`${style.shadowCustomed} bg-gray-100 dark:bg-gray-800 shadow-lg text-gray-800 dark:text-gray-300`}>
                 {
                   headers.map((header, index) => (
                     <th key={index} className={`text-start text-sm px-4 py-6`}>{header}</th>
@@ -31,7 +67,7 @@ const Table = ({ headers, tableData, id, deleteRow }) => {
             <tbody>
               {
                 tableData.map((el, index) => (
-                  <tr key={id[index]} className={`${style.shadowCustomed} rounded-lg bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
+                  <tr key={id[index]} className={`${style.shadowCustomed} bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
                     <td className="text-sm px-4 py-6">{index + 1}</td>
                     {
                       Object.keys(el).map((key) => (
@@ -45,7 +81,15 @@ const Table = ({ headers, tableData, id, deleteRow }) => {
                         {
                           user.role === "employee"
                           &&
-                          <div className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer">
+                          <div
+                            onClick={() => {
+                              setActionIndex(id[index]);
+                              confirmationUpdate();
+                              confirmationPopUpIsOpen();
+                              getOneData(id[index]);
+                            }}
+                            className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer"
+                          >
                             <BiSolidEdit />
                           </div>
                         }
@@ -53,7 +97,11 @@ const Table = ({ headers, tableData, id, deleteRow }) => {
                           pageName !== "markes"
                           &&
                           <div
-                            onClick={() => deleteRow(id[index])}
+                            onClick={() => {
+                              setActionIndex(id[index]);
+                              confirmationDelete();
+                              confirmationPopUpIsOpen();
+                            }}
                             className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
                           >
                             <MdDelete />
@@ -85,7 +133,7 @@ const Table = ({ headers, tableData, id, deleteRow }) => {
                       <td>
                         <div className="flex items-center gap-2">
                           <Link
-                            to={`${id[index]}`}
+                            to={`${el.name}`}
                             onClick={() => {
                               setSingleSubject({
                                 name: el.name,
@@ -97,7 +145,7 @@ const Table = ({ headers, tableData, id, deleteRow }) => {
                             <FaPlus />
                           </Link>
                           <Link
-                            to={`${id[index]}/markes`}
+                            to={`${el.name}/markes`}
                             onClick={() => {
                               setSingleSubject({
                                 name: el.name,

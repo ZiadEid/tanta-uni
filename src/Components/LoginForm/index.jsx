@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import logo from '../../Assets/logo.png';
+import logo from '/Assets/uni-logo.png';
 import { IoMdArrowDropdown } from "react-icons/io";
 import { FaIdCard } from "react-icons/fa6";
 import { MdOutlineLockOpen } from "react-icons/md";
@@ -10,7 +10,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const LoginForm = () => {
-  const { BASE_URL, setToken, setUserRole } = useStore();
+  const { BASE_URL, setToken } = useStore();
   const navigate = useNavigate();
 
   // form on submit function
@@ -29,7 +29,7 @@ const LoginForm = () => {
       // Delay the navigation
       setTimeout(() => {
         navigate("/");
-      }, 2100); // Delays for more than autoClose duration
+      }, 2100);
       
       actions.resetForm();
     } catch (error) {
@@ -53,7 +53,7 @@ const LoginForm = () => {
         onSubmit={handleSubmit}
         className='flex flex-col gap-3'
       >
-        <img src={logo} alt="Tanta Universaty" className='w-30 h-30 rounded-full absolute top-0 left-50 -translate-1/2 border-6 border-[#fcfcfc] dark:border-gray-900 bg-gray-800 shadow' />
+        <img src={logo} alt="Tanta Universaty" className='w-30 h-30 rounded-full absolute top-0 left-50 -translate-1/2 border-6 border-[#fcfcfc] dark:border-gray-900 bg-[#fcfcfc] dark:bg-gray-900 shadow' />
         <div className='relative'>
           <select
             name="userType"
@@ -113,7 +113,7 @@ const LoginForm = () => {
         <button
           disabled={isSubmitting}
           type='submit'
-          className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer'
+          className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer outline-none'
         >
           Login
         </button>

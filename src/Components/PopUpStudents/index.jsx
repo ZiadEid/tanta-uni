@@ -10,10 +10,11 @@ import { PopUpStudentsSchema } from './PopUpStudentsSchema';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const PopUpStudents = ({ getData }) => {
+const PopUpStudents = ({ slug, getData }) => {
   const { mSection } = useParams();
+  const navigate = useNavigate();
   const { BASE_URL, token, popUpIsClosed } = useStore();
   const [years, setYears] = useState([]);
   const [yearId, setYearId] = useState([]);
@@ -34,7 +35,6 @@ const PopUpStudents = ({ getData }) => {
       setYears(newYears);
       setYearId(newId);
     } catch (error) {
-      console.log(error);
       navigate("/error")
     }
   }
@@ -48,9 +48,11 @@ const PopUpStudents = ({ getData }) => {
     const newValues = {
       ...values,
       nationalId: `${values.nationalId}`,
-      phoneNumber: `0${values.phoneNumber}`,
-      universityId: `${values.universityId}`,
-      sectionName: `${mSection}`
+      phoneNumber: `${values.phoneNumber}`,
+      universityId: `${slug}${values.universityId}`,
+      hourCost: `${values.hourCost}`,
+      sectionName: `${mSection}`,
+      yearId: values.yearId === "undefined" ? `${yearId[0]}` : `${values.yearId}`,
     }
     try {
       const res = await axios.post(`${BASE_URL}student/createStudent`, newValues, {
@@ -59,7 +61,7 @@ const PopUpStudents = ({ getData }) => {
         }
       });
       popUpIsClosed();
-      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
       notify();
       actions.resetForm();
       getData();
@@ -74,11 +76,12 @@ const PopUpStudents = ({ getData }) => {
     initialValues: {
       nationalId: "",
       name: "",
-      gender: "",
+      gender: "Male",
       universityId: "",
       phoneNumber: "",
       email: "",
-      yearId: ""
+      hourCost: "",
+      yearId: `${yearId[0]}`
     },
     validationSchema: PopUpStudentsSchema,
     onSubmit
@@ -86,6 +89,7 @@ const PopUpStudents = ({ getData }) => {
 
   return (
     <form
+      onClick={(e) => { e.stopPropagation() }}
       onSubmit={handleSubmit}
       className='max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative'>
       <span
@@ -169,7 +173,7 @@ const PopUpStudents = ({ getData }) => {
       }
       <div className='flex'>
         <input
-          type="number"
+          type="text"
           name='phoneNumber'
           placeholder='رقم الهاتف'
           value={values.phoneNumber}
@@ -184,6 +188,24 @@ const PopUpStudents = ({ getData }) => {
       {
         errors.phoneNumber && touched.phoneNumber &&
         <p className='error text-[#dc3545]'>{errors.phoneNumber}</p>
+      }
+      <div className='flex'>
+        <input
+          type="number"
+          name='hourCost'
+          placeholder='سعر الساعة'
+          value={values.hourCost}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+        />
+        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+          <TbNumbers />
+        </div>
+      </div>
+      {
+        errors.hourCost && touched.hourCost &&
+        <p className='error text-[#dc3545]'>{errors.hourCost}</p>
       }
       <div className='flex'>
         <input
@@ -228,7 +250,7 @@ const PopUpStudents = ({ getData }) => {
       <button
         disabled={isSubmitting}
         type='submit'
-        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer'
+        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer outline-none'
       >
         submit
       </button>

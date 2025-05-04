@@ -8,16 +8,18 @@ import { useStore } from '../../Store';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const PopUpSubjects = ({ getData }) => {
-  const { BASE_URL, token, popUpIsClosed } = useStore();
+const PopUpSubjects = ({ slug, getData }) => {
   const { mSection } = useParams();
-
-  const [years, setYears] = useState([]);
+  const navigate = useNavigate();
+  // Global State
+  const { BASE_URL, token, popUpIsClosed } = useStore();
+  // Local State
   const [yearId, setYearId] = useState([]);
-  const [doctors, setDoctors] = useState([]);
+  const [years, setYears] = useState([]);
   const [doctorId, setDoctorId] = useState([]);
+  const [doctors, setDoctors] = useState([]);
 
   const getYears = async () => {
     try {
@@ -35,7 +37,6 @@ const PopUpSubjects = ({ getData }) => {
       setYears(newYears);
       setYearId(newId);
     } catch (error) {
-      console.log(error);
       navigate("/error")
     }
   }
@@ -56,7 +57,6 @@ const PopUpSubjects = ({ getData }) => {
       setDoctors(newDoctors);
       setDoctorId(newId);
     } catch (error) {
-      console.log(error);
       navigate("/error")
     }
   }
@@ -70,9 +70,12 @@ const PopUpSubjects = ({ getData }) => {
   const onSubmit = async (values, actions) => {
     const newValues = {
       ...values,
+      code: `${slug}${values.code}`,
       hoursNumber: `${values.hoursNumber}`,
       highestDegree: `${values.highestDegree}`,
-      sectionName: `${mSection}`
+      sectionName: `${mSection}`,
+      doctorId: values.doctorId === "undefined" ? `${doctorId[0]}` : `${values.doctorId}`,
+      yearId: values.yearId === "undefined" ? `${yearId[0]}` : `${values.yearId}`,
     }
     try {
       const res = await axios.post(`${BASE_URL}subject/createSubject`, newValues, {
@@ -81,7 +84,7 @@ const PopUpSubjects = ({ getData }) => {
         }
       });
       popUpIsClosed();
-      const notify = () => toast.success(`${res.data.message}`, { autoClose: 2000 });
+      const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
       notify();
       actions.resetForm();
       getData();
@@ -95,12 +98,12 @@ const PopUpSubjects = ({ getData }) => {
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       name: "",
-      term: "",
+      term: "FirstTerm",
       code: "",
       hoursNumber: "",
       highestDegree: "",
-      doctorId: "",
-      yearId: ""
+      doctorId: `${doctorId[0]}`,
+      yearId: `${yearId[0]}`
     },
     validationSchema: PopUpSubjectsSchema,
     onSubmit
@@ -108,6 +111,7 @@ const PopUpSubjects = ({ getData }) => {
 
   return (
     <form
+      onClick={(e) => { e.stopPropagation() }}
       onSubmit={handleSubmit}
       className='max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative'>
       <span
@@ -254,7 +258,7 @@ const PopUpSubjects = ({ getData }) => {
       <button
         disabled={isSubmitting}
         type='submit'
-        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer'
+        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer outline-none'
       >
         submit
       </button>

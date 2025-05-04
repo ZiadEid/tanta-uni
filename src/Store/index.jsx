@@ -7,11 +7,11 @@ export const useStore = create((set) => (
     // Token
     token: localStorage.getItem('token') || null,
     setToken: (accessToken) => {
-      set({token: accessToken});
+      set({ token: accessToken });
       localStorage.setItem('token', accessToken);
     },
     clearToken: () => {
-      set({token: null});
+      set({ token: null });
       localStorage.removeItem("token");
     },
     // User Data
@@ -25,7 +25,7 @@ export const useStore = create((set) => (
     darkMode: (newMode) => set({ theme: newMode }),
     // close and open sidebar
     closeSide: localStorage.getItem("closeSide") || true,
-    setCloseSide: () => set((state) => ({closeSide: !state.closeSide})),
+    setCloseSide: () => set((state) => ({ closeSide: !state.closeSide })),
     // Page Name
     pageName: "",
     profileActive: () => set({ pageName: "profile" }),
@@ -35,6 +35,7 @@ export const useStore = create((set) => (
     doctorsActive: () => set({ pageName: "doctors" }),
     studentsActive: () => set({ pageName: "students" }),
     singleSubjectActive: () => set({ pageName: "singleSubject" }),
+    financeActive: () => set({ pageName: "finance" }),
     markesActive: () => set({ pageName: "markes" }),
     doctorSubjectActive: () => set({ pageName: "doctorSubject" }),
     errorActive: () => set({ pageName: "error" }),
@@ -42,10 +43,21 @@ export const useStore = create((set) => (
     popUpToggel: false,
     popUpIsOpen: () => set({ popUpToggel: true }),
     popUpIsClosed: () => set({ popUpToggel: false }),
-    popUpInitValues: {},
-    setPopUpInitValues: (newPopUpInitValues) => set({popUpInitValues: {...newPopUpInitValues}}),
-    mSections: [],
-    setMSections: (newMSections) => set({ mSections: newMSections }),
+    popUpUpdateToggel: false,
+    popUpUpdateIsOpen: () => set({ popUpUpdateToggel: true }),
+    popUpUpdateIsClosed: () => set({ popUpUpdateToggel: false }),
+    confirmationPopUpToggel: false,
+    confirmationPopUpIsOpen: () => set({ confirmationPopUpToggel: true }),
+    confirmationPopUpIsClosed: () => set({ confirmationPopUpToggel: false }),
+    confirmationType: "update",
+    confirmationDelete: () => set({ confirmationType: "delete" }),
+    confirmationUpdate: () => set({ confirmationType: "update" }),
+    // Main Sections For Employees
+    mSections: JSON.parse(localStorage.getItem("mSections")) || null,
+    setMSections: (newMSections) => {
+      set({ mSections: newMSections });
+      localStorage.setItem('mSections', JSON.stringify(newMSections));
+    },
     // Single Subject Data
     singleSubject: JSON.parse(localStorage.getItem("singleSubject")) || null,
     setSingleSubject: (newSingleSubject) => {
@@ -53,7 +65,7 @@ export const useStore = create((set) => (
       localStorage.setItem('singleSubject', JSON.stringify(newSingleSubject));
     },
     clearUser: () => {
-      set({singleSubject: null});
+      set({ singleSubject: null });
       localStorage.removeItem("singleSubject");
     },
   }

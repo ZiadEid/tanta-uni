@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { FaRegUser } from "react-icons/fa";
+import { RiLogoutCircleRLine } from "react-icons/ri";
 import { MdOutlineDarkMode } from "react-icons/md";
 import { MdLightMode } from "react-icons/md";
 import { useStore } from "../../Store";
@@ -40,7 +39,7 @@ const Navbar = () => {
         }
       </div>
       <div className="p-3 bg-white dark:bg-[#171e2e] shadow hover:shadow-lg text-[#2a52be] dark:text-white border border-white dark:border-gray-700 w-fit rounded-full text-lg cursor-pointer">
-        <FaRegUser onClick={() => logOut()} />
+        <RiLogoutCircleRLine onClick={() => logOut()} />
       </div>
     </div>
   )

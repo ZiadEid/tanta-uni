@@ -36,7 +36,7 @@ const StudyYearsPage = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}year/findAll/${mSection}?page=1&limit=10`, {
+      const res = await axios.get(`${BASE_URL}year/findAll/${mSection}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

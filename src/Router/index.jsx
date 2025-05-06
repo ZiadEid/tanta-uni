@@ -15,6 +15,8 @@ import { useStore } from "../Store";
 import DoctorSubjects from "../Pages/DoctorSubjects";
 import LayoutLoader from "../Layout/LayoutLoader";
 import Finance from "../Pages/Finance";
+import StudentSubjects from "../Pages/StudentSubjects";
+import ChartPage from "../Pages/ChartPage";
 
 const Router = () => {
   const { user, token } = useStore();
@@ -53,6 +55,14 @@ const Router = () => {
                     element={
                       <LayoutWraper>
                         <ProfilePage />
+                      </LayoutWraper>
+                    }
+                  />
+                  <Route
+                    path="chart"
+                    element={
+                      <LayoutWraper>
+                        <ChartPage />
                       </LayoutWraper>
                     }
                   />
@@ -105,6 +115,14 @@ const Router = () => {
                           </LayoutWraper>
                         }
                       />
+                      <Route
+                        path="markes"
+                        element={
+                          <LayoutWraper>
+                            <MarkesPage />
+                          </LayoutWraper>
+                        }
+                      />
                     </Route>
                   </Route>
                   <Route
@@ -120,14 +138,6 @@ const Router = () => {
                     element={
                       <LayoutWraper>
                         <StudentsPage />
-                      </LayoutWraper>
-                    }
-                  />
-                  <Route
-                    path="finance"
-                    element={
-                      <LayoutWraper>
-                        <Finance />
                       </LayoutWraper>
                     }
                   />
@@ -147,7 +157,7 @@ const Router = () => {
                       }
                     />
                     <Route
-                      path=":subjectsId"
+                      path=":subjectsName/markes"
                       element={
                         <LayoutWraper>
                           <MarkesPage />
@@ -157,10 +167,18 @@ const Router = () => {
                   </Route>
                   :
                   <Route
-                    path="/:yearName"
+                    path="/:yearId"
                   >
                     <Route
                       index
+                      element={
+                        <LayoutWraper>
+                          <StudentSubjects />
+                        </LayoutWraper>
+                      }
+                    />
+                    <Route
+                      path=":subjectsName/markes"
                       element={
                         <LayoutWraper>
                           <MarkesPage />

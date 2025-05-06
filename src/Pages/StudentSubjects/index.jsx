@@ -10,57 +10,59 @@ import AddNewBtn from '../../Components/AddNewBtn';
 import NoContent from '../../Components/NoContent';
 import Loader from '../../Layout/Loader';
 import UpdateSubject from '../../Components/UpdateSubject';
+import PopUpStudentSubjects from '../../Components/PopUpStudentSubjects';
 
-const SubjectsPage = () => {
+const StudentSubjects = () => {
   const navigate = useNavigate();
-  const { mSection } = useParams();
+  const { yearId } = useParams();
   // Golbal state
-  const { BASE_URL,
+  const {
+    BASE_URL,
+    user,
     token,
     popUpToggel,
     popUpIsClosed,
     popUpUpdateToggel,
     popUpUpdateIsClosed,
-    mSections,
-    subjectsActive,
-    confirmationPopUpIsClosed
+    confirmationPopUpIsClosed,
+    studentSubjectsActive
   } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
   const [id, setId] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [filterdSubjects, setFilterdSubjects] = useState([]);
-  const [subject, setSubject] =useState({});
+  const [subject, setSubject] = useState({});
   const [slug, setSlug] = useState(null);
 
-  const getCurrentSlug = () => {
-    mSections.forEach((el) => {
-      if (mSection === el.name) {
-        setSlug(el.slug);
-      }
-    })
-  }
+  // const getCurrentSlug = () => {
+  //   mSections.forEach((el) => {
+  //     if (mSection === el.name) {
+  //       setSlug(el.slug);
+  //     }
+  //   })
+  // }
 
 
   const getData = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}subject/findAll/${mSection}`, {
+      const res = await axios.get(`${BASE_URL}student/getSubjectsByYear/${user.id}/${yearId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
       const newSubjects = [];
       const newId = [];
-      res.data.newSubjects.forEach((el) => {
+      res.data.subjects.forEach((el) => {
         newSubjects.push({
-          name: el.name,
-          code: el.code,
-          hoursNumber: el.hoursNumber,
-          highestDegree: el.highestDegree,
-          doctorName: el.doctorName,
-          yearName: el.yearName,
+          name: el.subjectId.name,
+          code: el.subjectId.code,
+          hoursNumber: el.subjectId.hoursNumber,
+          highestDegree: el.subjectId.highestDegree,
+          doctorName: el.subjectId.doctorId.name,
+          term: el.subjectId.term === "FirstTerm" ? "الاول" : "الثاني",
         });
-        newId.push(el._id);
+        newId.push(el.subjectId._id);
       })
       setSubjects(newSubjects);
       setId(newId);
@@ -75,14 +77,16 @@ const SubjectsPage = () => {
   // Get Subjects
   useEffect(() => {
     getData();
-    subjectsActive();
-    getCurrentSlug();
+    studentSubjectsActive();
+    // getCurrentSlug();
   }, []);
 
   // Delete Subject
   const deleteRow = async (index) => {
+    console.log(index)
+    console.log(user.id)
     try {
-      const res = await axios.delete(`${BASE_URL}subject/deleteOne/${index}`, {
+      const res = await axios.delete(`${BASE_URL}student/removeStudentSubject/${user.id}/${index}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -136,7 +140,7 @@ const SubjectsPage = () => {
                 onClick={popUpIsClosed}
                 className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
               >
-                <PopUpSubjects slug={slug} getData={getData} />
+                <PopUpStudentSubjects data={id} getData={getData} />
               </div>
             }
             {
@@ -164,7 +168,7 @@ const SubjectsPage = () => {
                   ?
                   <>
                     <Table
-                      headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "السنة", "", "الدرجات"]}
+                      headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "الترم", "", "الدرجات"]}
                       tableData={filterdSubjects.length == 0 ? subjects : filterdSubjects}
                       id={id}
                       deleteRow={deleteRow}
@@ -182,4 +186,4 @@ const SubjectsPage = () => {
   )
 }
 
-export default SubjectsPage
+export default StudentSubjects

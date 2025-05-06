@@ -1,4 +1,4 @@
-import profileImg from '/Assets/dabo.jpg';
+import profileImg from '/Assets/OIP.jpg';
 import { FaUserEdit } from "react-icons/fa";
 import { useStore } from "../../Store";
 
@@ -8,7 +8,7 @@ const ProfileCard = () => {
 
   return (
     <div className="group max-w-full w-[75%] p-8 bg-gray-200 dark:bg-gray-800 rounded-lg shodow-lg relative overflow-hidden">
-      <FaUserEdit className="absolute top-2 end-2 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-1 text-blue-600 rounded-lg cursor-pointer" />
+      {/* <FaUserEdit className="absolute top-2 end-2 w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-1 text-blue-600 rounded-lg cursor-pointer" /> */}
       <div className="profile-header flex items-center gap-5">
         <div className="image w-[150px] border-4 border-[#fcfcfc] dark:border-gray-900 p-1 rounded-full overflow-hidden">
           <img className="w-full" src={profileImg} alt={user?.name} />

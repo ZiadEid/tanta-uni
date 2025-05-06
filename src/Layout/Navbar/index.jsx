@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
   // state for dark mode icone
-  const {theme, darkMode, clearToken, setUser} = useStore();
+  const {theme, darkMode, clearToken, setUser, setMSections} = useStore();
   // Toggle dark mode
   function toggleDarkMode() {
     const htmlElement = document.documentElement;
@@ -21,6 +21,8 @@ const Navbar = () => {
     clearToken();
     localStorage.removeItem("user");
     setUser(localStorage.getItem("user"));
+    localStorage.removeItem("mSections");
+    setMSections(localStorage.getItem("mSections"));
     navigate("/login");
   }
 

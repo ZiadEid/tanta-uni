@@ -10,7 +10,7 @@ import Loader from '../../Layout/Loader';
 const DoctorSubjects = () => {
   const navigate = useNavigate();
   // Global State
-  const { BASE_URL, token, doctorSubjectActive } = useStore();
+  const { BASE_URL, token, doctorSubjectsActive, user } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
   const [id, setId] = useState([]);
@@ -19,7 +19,7 @@ const DoctorSubjects = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}subject/getDoctorSubjects/${"680d9582fff3ac77ec538f57"}`, {
+      const res = await axios.get(`${BASE_URL}subject/getDoctorSubjects/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -42,7 +42,7 @@ const DoctorSubjects = () => {
         setLoader(false);
       }, 200);
     } catch (error) {
-      navigate("/error")
+      // navigate("/error")
       console.log(error)
     }
   }
@@ -54,7 +54,7 @@ const DoctorSubjects = () => {
   }, []);
 
   return (
-    <div className='grow relative'>
+    <div className='grow relative px-6 py-2'>
       {
         loader
           ?
@@ -66,13 +66,13 @@ const DoctorSubjects = () => {
                 ?
                 <>
                   <div
-                    className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2 px-6 mt-2"
+                    className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
                   >
                     <SearchInput data={subjects} setData={setFilterdSubjects} />
                   </div>
                   <Table
                     headers={["#", "اسم المادة", "كود المادة", "عدد الساعات", "اعلي درجة", "الترم", ""]}
-                    tableData={subjects}
+                    tableData={filterdSubjects.length == 0 ? subjects : filterdSubjects}
                     id={id}
                   />
                 </>

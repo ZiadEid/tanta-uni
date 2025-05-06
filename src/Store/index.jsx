@@ -37,7 +37,9 @@ export const useStore = create((set) => (
     singleSubjectActive: () => set({ pageName: "singleSubject" }),
     financeActive: () => set({ pageName: "finance" }),
     markesActive: () => set({ pageName: "markes" }),
-    doctorSubjectActive: () => set({ pageName: "doctorSubject" }),
+    chartActive: () => set({ pageName: "chart" }),
+    doctorSubjectsActive: () => set({ pageName: "doctorSubjects" }),
+    studentSubjectsActive: () => set({ pageName: "studentSubjects" }),
     errorActive: () => set({ pageName: "error" }),
     // PopUp
     popUpToggel: false,

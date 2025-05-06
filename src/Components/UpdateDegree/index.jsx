@@ -10,13 +10,13 @@ import { useParams } from 'react-router-dom';
 const UpdateDegree = ({data, getData}) => {
   // Global State
   const { BASE_URL, token, popUpUpdateIsClosed } = useStore();
-  const { subjectsId } = useParams();
+  const { subjectsName } = useParams();
   
 
   // form on submit function
   const onSubmit = async (values, actions) => {
     const newValues = {
-      subjectId: `${subjectsId}`,
+      subjectId: `${data.subjectId}`,
       subjectDegree: `${values.subjectDegree}`
     }
     try {

@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const SubmitSheet = ({ getData, headers, tableData, id }) => {
-  const { subjectsId } = useParams();
+  const { subjectsName } = useParams();
   const { BASE_URL, token, singleSubject, confirmationPopUpToggel, confirmationPopUpIsOpen, confirmationPopUpIsClosed } = useStore();
   const [studentDegrees, setStudentDegrees] = useState([]);
   const inputRefs = useRef([]);
@@ -27,7 +27,7 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
 
   const postDegree = async () => {
     const values = {
-      subjectId: `${subjectsId}`,
+      subjectName: `${subjectsName}`,
       highestDegree: `${singleSubject.highestDegree}`,
       studentDegrees: studentDegrees,
     }
@@ -45,11 +45,12 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
       const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
       notify();
       confirmationPopUpIsClosed();
+      console.log(error)
     }
   }
 
   return (
-    <div className='w-full px-6 mt-2'>
+    <div className='w-full'>
       {
         confirmationPopUpToggel &&
         <div

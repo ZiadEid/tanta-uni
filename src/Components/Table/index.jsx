@@ -6,10 +6,10 @@ import { FaEye, FaPlus } from "react-icons/fa";
 import { useStore } from "../../Store";
 import { Link } from "react-router-dom";
 import Confirmation from "../Confirmation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 
-const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) => {
+const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }) => {
   // Global State
   const {
     user,
@@ -27,7 +27,7 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
   const [actionIndex, setActionIndex] = useState(null);
 
   return (
-    <div className='w-full px-6'>
+    <div className='w-full'>
       {
         confirmationPopUpToggel
           ?
@@ -79,7 +79,7 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
                       &&
                       <td className="flex items-center gap-2">
                         {
-                          user.role === "employee"
+                          user.role === "employee" && pageName !== "finance"
                           &&
                           <div
                             onClick={() => {
@@ -94,7 +94,7 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
                           </div>
                         }
                         {
-                          pageName !== "markes"
+                          pageName !== "markes" && pageName !== "finance"
                           &&
                           <div
                             onClick={() => {
@@ -110,18 +110,18 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
                       </td>
                     }
                     {
-                      pageName === "doctorSubject"
+                      pageName === "doctorSubject" || pageName === "studentSubjects"
                       &&
                       <td>
                         <Link
-                          to={`${id[index]}`}
+                          to={`${el.name}/markes`}
                           onClick={() => {
                             setSingleSubject({
                               name: el.name,
                               highestDegree: el.highestDegree
                             })
                           }}
-                          className="text-lg py-6 text-blue-600"
+                          className="text-lg py-6 px-4 text-blue-600 block w-fit ms-4"
                         >
                           <FaEye />
                         </Link>
@@ -169,6 +169,24 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, pagenation }) =>
                         >
                           <FaEye />
                         </Link>
+                      </td>
+                    }
+                    {
+                      pageName === "finance"
+                      &&
+                      <td className="">
+                        {
+                          el.isPaid == "غير مدفوع"
+                          &&
+                          <button
+                            onClick={() => {
+                              confirmPayment(id[index]);
+                            }}
+                            className="font-semibold py-2 px-4 bg-green-600 block w-fit ms-4 rounded-lg cursor-pointer"
+                          >
+                            تاكيد الدفع
+                          </button>
+                        }
                       </td>
                     }
                   </tr>

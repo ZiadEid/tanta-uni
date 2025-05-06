@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import userImg from '/Assets/dabo.jpg';
+import userImg from '/Assets/OIP.jpg';
 import { useStore } from "../../Store";
 
 const UserSide = () => {

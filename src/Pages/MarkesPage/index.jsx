@@ -15,9 +15,11 @@ const MarkesPage = () => {
   // Global State
   const {
     BASE_URL,
+    user,
     token,
     popUpUpdateToggel,
-    popUpUpdateIsClosed
+    popUpUpdateIsClosed,
+    markesActive
 
   } = useStore();
   // Local State
@@ -38,6 +40,7 @@ const MarkesPage = () => {
       });
       const newMarks = [];
       const newId = [];
+      console.log(res.data.degrees)
       res.data.degrees.forEach((el) => {
         newMarks.push({
           name: el.studentName,
@@ -53,12 +56,13 @@ const MarkesPage = () => {
         setLoader(false);
       }, 200);
     } catch (error) {
-      // navigate("/error")
+      navigate("/error")
     }
   }
 
   useEffect(() => {
     getData();
+    markesActive();
   }, []);
 
   // get degree
@@ -72,6 +76,7 @@ const MarkesPage = () => {
       const newdegree = {};
       newdegree.id = res.data.subjectDegree._id;
       newdegree.subjectDegree = res.data.subjectDegree.subjectDegree;
+      newdegree.subjectId = res.data.subjectDegree.subjectId;
       setDegree({ ...newdegree });
     } catch (error) {
       navigate("/error");
@@ -79,7 +84,7 @@ const MarkesPage = () => {
   }
 
   return (
-    <div className="grow relative">
+    <div className="grow relative px-6 py-2">
       {
         loader
           ?
@@ -102,7 +107,7 @@ const MarkesPage = () => {
                   ?
                   <>
                     <div
-                      className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2 px-6 mt-2"
+                      className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
                     >
                       <SearchInput data={marks} setData={setFilterdMarks} />
                     </div>

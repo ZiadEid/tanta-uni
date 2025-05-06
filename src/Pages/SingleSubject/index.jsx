@@ -53,7 +53,7 @@ const SingleSubject = () => {
   }, []);
 
   return (
-    <div className='grow relative'>
+    <div className='grow relative px-6 py-2'>
       {
         loader
           ?

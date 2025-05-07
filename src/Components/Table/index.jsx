@@ -75,7 +75,7 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }
                       ))
                     }
                     {
-                      pageName !== "doctorSubject"
+                      pageName !== "doctorSubjects"
                       &&
                       <td className="flex items-center gap-2">
                         {
@@ -94,38 +94,61 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }
                           </div>
                         }
                         {
-                          pageName !== "markes" && pageName !== "finance"
-                          &&
-                          <div
-                            onClick={() => {
-                              setActionIndex(id[index]);
-                              confirmationDelete();
-                              confirmationPopUpIsOpen();
-                            }}
-                            className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
-                          >
-                            <MdDelete />
-                          </div>
+                          pageName !== "markes"
+                            ?
+                            pageName !== "finance" || pageName != "generalGPA"
+                            &&
+                            <div
+                              onClick={() => {
+                                setActionIndex(id[index]);
+                                confirmationDelete();
+                                confirmationPopUpIsOpen();
+                              }}
+                              className="text-lg px-2 py-6 text-red-500 hover:text-red-600 duration-150 cursor-pointer"
+                            >
+                              <MdDelete />
+                            </div>
+                            :
+                            ""
                         }
                       </td>
                     }
                     {
-                      pageName === "doctorSubject" || pageName === "studentSubjects"
-                      &&
-                      <td>
-                        <Link
-                          to={`${el.name}/markes`}
-                          onClick={() => {
-                            setSingleSubject({
-                              name: el.name,
-                              highestDegree: el.highestDegree
-                            })
-                          }}
-                          className="text-lg py-6 px-4 text-blue-600 block w-fit ms-4"
-                        >
-                          <FaEye />
-                        </Link>
-                      </td>
+                      pageName === "doctorSubjects"
+                        ?
+                        <td>
+                          <Link
+                            to={`${el.name}/markes`}
+                            onClick={() => {
+                              setSingleSubject({
+                                name: el.name,
+                                highestDegree: el.highestDegree
+                              })
+                            }}
+                            className="text-lg py-6 px-4 text-blue-600 block w-fit ms-4"
+                          >
+                            <FaEye />
+                          </Link>
+                        </td>
+                        :
+                        pageName === "studentSubjects"
+                          ?
+                          <td>
+                            <Link
+                              to={`${el.name}/markes`}
+                              onClick={() => {
+                                setSingleSubject({
+                                  name: el.name,
+                                  highestDegree: el.highestDegree
+                                })
+                              }}
+                              className="text-lg py-6 px-4 text-blue-600 block w-fit ms-4"
+                            >
+                              <FaEye />
+                            </Link>
+                          </td>
+                          :
+                          ""
                     }
                     {
                       pageName == "subjects"

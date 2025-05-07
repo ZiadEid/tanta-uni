@@ -40,6 +40,7 @@ export const useStore = create((set) => (
     chartActive: () => set({ pageName: "chart" }),
     doctorSubjectsActive: () => set({ pageName: "doctorSubjects" }),
     studentSubjectsActive: () => set({ pageName: "studentSubjects" }),
+    generalGPAActive: () => set({ pageName: "generalGPA" }),
     errorActive: () => set({ pageName: "error" }),
     // PopUp
     popUpToggel: false,

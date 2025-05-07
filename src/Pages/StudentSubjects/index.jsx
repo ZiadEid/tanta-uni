@@ -11,6 +11,7 @@ import NoContent from '../../Components/NoContent';
 import Loader from '../../Layout/Loader';
 import UpdateSubject from '../../Components/UpdateSubject';
 import PopUpStudentSubjects from '../../Components/PopUpStudentSubjects';
+import GenralGPA from '../../Components/GenralGPA';
 
 const StudentSubjects = () => {
   const navigate = useNavigate();
@@ -33,16 +34,6 @@ const StudentSubjects = () => {
   const [subjects, setSubjects] = useState([]);
   const [filterdSubjects, setFilterdSubjects] = useState([]);
   const [subject, setSubject] = useState({});
-  const [slug, setSlug] = useState(null);
-
-  // const getCurrentSlug = () => {
-  //   mSections.forEach((el) => {
-  //     if (mSection === el.name) {
-  //       setSlug(el.slug);
-  //     }
-  //   })
-  // }
-
 
   const getData = async () => {
     try {
@@ -78,13 +69,10 @@ const StudentSubjects = () => {
   useEffect(() => {
     getData();
     studentSubjectsActive();
-    // getCurrentSlug();
   }, []);
 
   // Delete Subject
   const deleteRow = async (index) => {
-    console.log(index)
-    console.log(user.id)
     try {
       const res = await axios.delete(`${BASE_URL}student/removeStudentSubject/${user.id}/${index}`, {
         headers: {
@@ -157,9 +145,14 @@ const StudentSubjects = () => {
                 className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
               >
                 {
-                  subjects.length !== 0
+                  subjects.length !== 0 && user.role != "student"
                   &&
                   <SearchInput data={subjects} setData={setFilterdSubjects} />
+                }
+                {
+                  user.role === "student"
+                  &&
+                  <GenralGPA />
                 }
                 <AddNewBtn />
               </div>

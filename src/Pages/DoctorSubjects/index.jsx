@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Table from '../../Components/Table';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../Store';
@@ -10,7 +10,7 @@ import Loader from '../../Layout/Loader';
 const DoctorSubjects = () => {
   const navigate = useNavigate();
   // Global State
-  const { BASE_URL, token, doctorSubjectsActive, user } = useStore();
+  const { BASE_URL, token, doctorSubjectsActive, user, pageName } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
   const [id, setId] = useState([]);
@@ -32,7 +32,7 @@ const DoctorSubjects = () => {
           code: el.code,
           hoursNumber: el.hoursNumber,
           highestDegree: el.highestDegree,
-          term: el.term,
+          term: el.term === "FirstTerm" ? "اولي" : "ثانية",
         });
         newId.push(el._id);
       })
@@ -42,15 +42,15 @@ const DoctorSubjects = () => {
         setLoader(false);
       }, 200);
     } catch (error) {
-      // navigate("/error")
-      console.log(error)
+      navigate("/error")
     }
   }
 
   // Get Subjects
   useEffect(() => {
     getData();
-    doctorSubjectActive();
+    doctorSubjectsActive();
+    console.log(pageName)
   }, []);
 
   return (
@@ -71,7 +71,7 @@ const DoctorSubjects = () => {
                     <SearchInput data={subjects} setData={setFilterdSubjects} />
                   </div>
                   <Table
-                    headers={["#", "اسم المادة", "كود المادة", "عدد الساعات", "اعلي درجة", "الترم", ""]}
+                    headers={["#", "اسم المادة", "كود المادة", "عدد الساعات", "اعلي درجة", "الترم",  ""]}
                     tableData={filterdSubjects.length == 0 ? subjects : filterdSubjects}
                     id={id}
                   />

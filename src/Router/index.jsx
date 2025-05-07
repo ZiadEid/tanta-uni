@@ -17,6 +17,7 @@ import LayoutLoader from "../Layout/LayoutLoader";
 import Finance from "../Pages/Finance";
 import StudentSubjects from "../Pages/StudentSubjects";
 import ChartPage from "../Pages/ChartPage";
+import GeneralGPAPage from "../Pages/GeneralGPAPage";
 
 const Router = () => {
   const { user, token } = useStore();
@@ -85,7 +86,6 @@ const Router = () => {
                         </LayoutWraper>
                       }
                     />
-
                   </Route>
                   <Route
                     path="sections"
@@ -174,6 +174,14 @@ const Router = () => {
                       element={
                         <LayoutWraper>
                           <StudentSubjects />
+                        </LayoutWraper>
+                      }
+                    />
+                    <Route
+                      path="general-gpa"
+                      element={
+                        <LayoutWraper>
+                          <GeneralGPAPage />
                         </LayoutWraper>
                       }
                     />

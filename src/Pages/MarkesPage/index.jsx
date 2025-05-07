@@ -40,14 +40,24 @@ const MarkesPage = () => {
       });
       const newMarks = [];
       const newId = [];
-      console.log(res.data.degrees)
       res.data.degrees.forEach((el) => {
-        newMarks.push({
-          name: el.studentName,
-          subjectDegree: el.subjectDegree,
-          GBA: el.GBA,
-          grade: el.grade,
-        });
+        if (user.role === "student") {
+          if (user.id === el.studentId._id) {
+            newMarks.push({
+              name: el.studentId.name,
+              subjectDegree: el.subjectDegree,
+              GBA: el.GBA,
+              grade: el.grade,
+            });
+          }
+        } else {
+          newMarks.push({
+            name: el.studentId.name,
+            subjectDegree: el.subjectDegree,
+            GBA: el.GBA,
+            grade: el.grade,
+          });
+        }
         newId.push(el._id);
       })
       setMarks(newMarks);
@@ -106,11 +116,15 @@ const MarkesPage = () => {
                 marks.length !== 0
                   ?
                   <>
-                    <div
+                    {
+                      user.role !== "student"
+                      &&
+                      <div
                       className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
                     >
                       <SearchInput data={marks} setData={setFilterdMarks} />
                     </div>
+                    }
                     <Table
                       headers={["#", "الطالب", "الدرجة", "GPA", "grade", ""]}
                       tableData={filterdMarks.length == 0 ? marks : filterdMarks}

@@ -60,7 +60,7 @@ const LoginForm = () => {
             value={values.userType}
             onChange={handleChange}
             onBlur={handleBlur}
-            className={`w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
+            className={`text-black w-full h-[40px] text-lg bg-white border border-[#2b6cb033] rounded ps-3`}
           >
             <option value="employee">شؤون ادارية</option>
             <option value="doctor">دكتور جامعي</option>

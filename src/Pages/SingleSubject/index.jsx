@@ -4,10 +4,7 @@ import Table from '../../Components/Table';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import PopUpSubjects from '../../Components/PopUpSubjects';
 import SubmitSheet from '../../Components/SubmitSheet';
-import SearchInput from '../../Components/SearchInput';
-import AddNewBtn from '../../Components/AddNewBtn';
 import NoContent from '../../Components/NoContent';
 import Loader from '../../Layout/Loader';
 
@@ -19,7 +16,8 @@ const SingleSubject = () => {
   // Local State
   const [loader, setLoader] = useState(true);
   const [marks, setMarks] = useState([]);
-  const [id, setId] = useState([]);
+  const [markId, setMarkId] = useState([]);
+
   const getData = async () => {
     try {
       const res = await axios.get(`${BASE_URL}subject/getSubjectStudents/${subjectsName}`, {
@@ -29,15 +27,16 @@ const SingleSubject = () => {
       });
       const newMarks = [];
       const newId = [];
-      res.data.students.forEach((el) => {
+      res.data.students.forEach((el, index) => {
         newMarks.push({
+          id: index + 1,
           name: el.studentId.name,
           universityId: el.studentId.universityId,
         });
         newId.push(el.studentId._id);
       })
       setMarks(newMarks);
-      setId(newId);
+      setMarkId(newId);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -46,7 +45,6 @@ const SingleSubject = () => {
     }
   }
 
-  // Get Subjects
   useEffect(() => {
     getData();
     singleSubjectActive();
@@ -68,7 +66,7 @@ const SingleSubject = () => {
                     getData={getData}
                     headers={["#", "الطالب", "رقم الجلوس", "الدرجة"]}
                     tableData={marks}
-                    id={id}
+                    id={markId}
                   />
                   <ToastContainer />
                 </div>

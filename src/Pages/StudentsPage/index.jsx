@@ -15,7 +15,9 @@ const StudentsPage = () => {
   const navigate = useNavigate();
   const { mSection } = useParams();
   // Global State
-  const { BASE_URL,
+  const {
+    pageName,
+    BASE_URL,
     token,
     popUpToggel,
     popUpIsClosed,
@@ -27,11 +29,14 @@ const StudentsPage = () => {
   } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [studentId, setStudentId] = useState([]);
   const [students, setStudents] = useState([]);
   const [filterdStudents, setFilterdStudents] = useState([]);
   const [student, setStudent] = useState({});
   const [slug, setSlug] = useState(null);
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getCurrentSlug = () => {
     mSections.forEach((el) => {
@@ -50,8 +55,9 @@ const StudentsPage = () => {
       });
       const newStudents = [];
       const newId = [];
-      res.data.newStudents.forEach((el) => {
+      res.data.newStudents.forEach((el, index) => {
         newStudents.push({
+          id: index + 1,
           name: el.name,
           nationalId: el.nationalId,
           gender: el.gender,
@@ -63,7 +69,15 @@ const StudentsPage = () => {
         newId.push(el._id);
       })
       setStudents(newStudents);
-      setId(newId);
+      setStudentId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newStudents[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false)
       }, 200);
@@ -76,7 +90,24 @@ const StudentsPage = () => {
     getData();
     studentsActive();
     getCurrentSlug();
+    console.log(pageName)
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = students[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   // Delete Student
   const deleteRow = async (index) => {
@@ -153,7 +184,12 @@ const StudentsPage = () => {
                 {
                   students.length !== 0
                   &&
-                  <SearchInput data={students} setData={setFilterdStudents} />
+                  <SearchInput
+                    data={students}
+                    setData={setPagenatedArray}
+                    page={page}
+                    limit={limit}
+                  />
                 }
                 <AddNewBtn />
               </div>
@@ -163,8 +199,13 @@ const StudentsPage = () => {
                   <>
                     <Table
                       headers={["#", "الأسم", "الرقم القومي", "الجنس", "كود الجامعة", "الهاتف", "البريد الالكتروني", "السنة", ""]}
-                      tableData={filterdStudents.length == 0 ? students : filterdStudents}
-                      id={id}
+                      tableData={students}
+                      id={studentId}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                       deleteRow={deleteRow}
                       getOneData={getStudent}
                     />

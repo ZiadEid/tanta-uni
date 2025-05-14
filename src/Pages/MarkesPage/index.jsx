@@ -24,10 +24,13 @@ const MarkesPage = () => {
   } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [marksId, setMarksId] = useState([]);
   const [marks, setMarks] = useState([]);
   const [filterdMarks, setFilterdMarks] = useState([]);
   const [degree, setDegree] = useState({});
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
 
 
@@ -40,11 +43,10 @@ const MarkesPage = () => {
       });
       const newMarks = [];
       const newId = [];
-      res.data.degrees.forEach((el) => {
+      res.data.degrees.forEach((el, index) => {
         if (user.role === "student") {
           if (user.id === el.studentId._id) {
             newMarks.push({
-              name: el.studentId.name,
               subjectDegree: el.subjectDegree,
               GBA: el.GBA,
               grade: el.grade,
@@ -52,6 +54,7 @@ const MarkesPage = () => {
           }
         } else {
           newMarks.push({
+            id: index + 1,
             name: el.studentId.name,
             subjectDegree: el.subjectDegree,
             GBA: el.GBA,
@@ -61,7 +64,15 @@ const MarkesPage = () => {
         newId.push(el._id);
       })
       setMarks(newMarks);
-      setId(newId);
+      setMarksId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newMarks[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -74,6 +85,22 @@ const MarkesPage = () => {
     getData();
     markesActive();
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = marks[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   // get degree
   const getDegree = async (id) => {
@@ -120,15 +147,25 @@ const MarkesPage = () => {
                       user.role !== "student"
                       &&
                       <div
-                      className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
-                    >
-                      <SearchInput data={marks} setData={setFilterdMarks} />
-                    </div>
+                        className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
+                      >
+                        <SearchInput
+                          data={marks}
+                          setData={setPagenatedArray}
+                          page={page}
+                          limit={limit}
+                        />
+                      </div>
                     }
                     <Table
-                      headers={["#", "الطالب", "الدرجة", "GPA", "grade", ""]}
-                      tableData={filterdMarks.length == 0 ? marks : filterdMarks}
-                      id={id}
+                      headers={user.role === "student" ? ["الدرجة", "GPA", "grade", ""] : ["#", "الطالب", "الدرجة", "GPA", "grade", ""]}
+                      tableData={marks}
+                      id={marksId}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                       getOneData={getDegree}
                     />
                     <ToastContainer />

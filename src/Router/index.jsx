@@ -1,9 +1,8 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 import LayoutWraper from "../Layout/LayoutWraper";
 import LoginPage from "../Pages/Auth/LoginPage";
 import ProfilePage from "../Pages/ProfilePage";
 import StudyYearsPage from "../Pages/StudyYearsPage";
-import SectionsPage from "../Pages/SectionsPage";
 import SubjectsPage from './../Pages/SubjectsPage';
 import DoctorsPage from './../Pages/DoctorsPage';
 import StudentsPage from './../Pages/StudentsPage';
@@ -87,14 +86,6 @@ const Router = () => {
                       }
                     />
                   </Route>
-                  <Route
-                    path="sections"
-                    element={
-                      <LayoutWraper>
-                        <SectionsPage />
-                      </LayoutWraper>
-                    }
-                  />
                   <Route path="subjects">
                     <Route
                       index

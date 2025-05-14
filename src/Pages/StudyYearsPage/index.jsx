@@ -27,10 +27,12 @@ const StudyYearsPage = () => {
   // loader
   const [loader, setLoader] = useState(true)
   // Data
-  const [id, setId] = useState([]);
+  const [yearId, setYearId] = useState([]);
   const [years, setYears] = useState([]);
-  const [filterdYears, setFilterdYears] = useState([]);
   const [year, setYear] = useState({});
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
 
   const getData = async () => {
@@ -42,14 +44,23 @@ const StudyYearsPage = () => {
       });
       const newYears = [];
       const newId = [];
-      res.data.years.forEach((el) => {
+      res.data.years.forEach((el, index) => {
         newYears.push({
+          id: index + 1,
           name: el.name
         });
         newId.push(el._id);
       })
       setYears(newYears);
-      setId(newId);
+      setYearId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newYears[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -62,6 +73,22 @@ const StudyYearsPage = () => {
     getData();
     yearsActive();
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = years[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   // Delete Year
   const deleteRow = async (index) => {
@@ -132,7 +159,12 @@ const StudyYearsPage = () => {
                 {
                   years.length != 0
                   &&
-                  <SearchInput data={years} setData={setFilterdYears} />
+                  <SearchInput
+                    data={years}
+                    setData={setPagenatedArray}
+                    page={page}
+                    limit={limit}
+                  />
                 }
                 <AddNewBtn />
               </div>
@@ -142,8 +174,13 @@ const StudyYearsPage = () => {
                   <>
                     <Table
                       headers={["#", "السـنة الدراسية", "", "المصاريف"]}
-                      tableData={filterdYears.length == 0 ? years : filterdYears}
-                      id={id}
+                      tableData={years}
+                      id={yearId}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                       deleteRow={deleteRow}
                       getOneData={getYear}
                     />

@@ -27,11 +27,13 @@ const SubjectsPage = () => {
   } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [subjectId, setSubjectId] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [filterdSubjects, setFilterdSubjects] = useState([]);
-  const [subject, setSubject] =useState({});
+  const [subject, setSubject] = useState({});
   const [slug, setSlug] = useState(null);
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getCurrentSlug = () => {
     mSections.forEach((el) => {
@@ -51,8 +53,9 @@ const SubjectsPage = () => {
       });
       const newSubjects = [];
       const newId = [];
-      res.data.newSubjects.forEach((el) => {
+      res.data.newSubjects.forEach((el, index) => {
         newSubjects.push({
+          id: index + 1,
           name: el.name,
           code: el.code,
           hoursNumber: el.hoursNumber,
@@ -63,7 +66,15 @@ const SubjectsPage = () => {
         newId.push(el._id);
       })
       setSubjects(newSubjects);
-      setId(newId);
+      setSubjectId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newSubjects[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -72,12 +83,27 @@ const SubjectsPage = () => {
     }
   }
 
-  // Get Subjects
   useEffect(() => {
     getData();
     subjectsActive();
     getCurrentSlug();
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = subjects[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   // Delete Subject
   const deleteRow = async (index) => {
@@ -155,7 +181,12 @@ const SubjectsPage = () => {
                 {
                   subjects.length !== 0
                   &&
-                  <SearchInput data={subjects} setData={setFilterdSubjects} />
+                  <SearchInput
+                    data={subjects}
+                    setData={setPagenatedArray}
+                    page={page}
+                    limit={limit}
+                  />
                 }
                 <AddNewBtn />
               </div>
@@ -165,8 +196,13 @@ const SubjectsPage = () => {
                   <>
                     <Table
                       headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "السنة", "", "الدرجات"]}
-                      tableData={filterdSubjects.length == 0 ? subjects : filterdSubjects}
-                      id={id}
+                      tableData={subjects}
+                      id={subjectId}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                       deleteRow={deleteRow}
                       getOneData={getSubject}
                     />

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import Table from '../../Components/Table';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../../Store';
-import SearchInput from '../../Components/SearchInput';
 import axios from 'axios';
 import NoContent from '../../Components/NoContent';
 import Loader from '../../Layout/Loader';
@@ -15,9 +14,12 @@ const GeneralGPAPage = () => {
   const { BASE_URL, token, generalGPAActive, user } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [generalGPAId, setGeneralGPAId] = useState([]);
   const [generalGPA, setGeneralGPA] = useState([]);
   const [singleSubject, setSingleSubject] = useState({});
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getData = async () => {
     try {
@@ -28,8 +30,9 @@ const GeneralGPAPage = () => {
       });
       const newGeneralGPA = [];
       const newId = [];
-      res.data.studentDegrees.forEach((el) => {
+      res.data.studentDegrees.forEach((el, index) => {
         newGeneralGPA.push({
+          id: index + 1,
           name: el.subjectId.name,
           term: el.subjectId.term === "FirstTerm" ? "الاول" : "الثاني",
           highestDegree: el.subjectId.highestDegree,
@@ -40,13 +43,20 @@ const GeneralGPAPage = () => {
         });
         newId.push(el._id);
       })
-      console.log(res.data)
       setSingleSubject({
         yearGba: res.data.yearGba,
         yearGrade: res.data.yearGrade,
       })
       setGeneralGPA(newGeneralGPA);
-      setId(newId);
+      setGeneralGPAId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newGeneralGPA[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -58,7 +68,24 @@ const GeneralGPAPage = () => {
   useEffect(() => {
     getData();
     generalGPAActive();
-  }, [])
+  }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = generalGPA[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
+
   return (
     <div className='grow relative px-6 py-4'>
       {
@@ -80,7 +107,12 @@ const GeneralGPAPage = () => {
                   <Table
                     headers={["#", "المادة", "الترم", "الدرجة النهائية", "درجة الطالب", "GPA", "التقدير", ""]}
                     tableData={generalGPA}
-                    id={id}
+                    id={generalGPAId}
+                    pagenatedArray={pagenatedArray}
+                    page={page}
+                    setPage={setPage}
+                    limit={limit}
+                    setLimit={setLimit}
                   />
                 </>
                 :

@@ -1,16 +1,36 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const SearchInput = ({ data, setData }) => {
+const SearchInput = ({ data, setData, page, limit }) => {
   const searchRef = useRef(null);
+  const [filterd, setFilterd] = useState([]);
 
   const handleSearch = () => {
     const value = searchRef.current.value; // Get input value directly
-    const filteredData = data.filter((el) =>
-      el.name.toLowerCase().includes(value.toLowerCase())
-    );
-
-    setData(filteredData); // Pass filtered results to parent component
+    const filteredData = data.filter(el => el.name.toLowerCase().includes(value.toLowerCase()));
+    setFilterd(filteredData);
   };
+
+  useEffect(() => {
+    if (filterd.length != 0) {
+      const newArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = filterd[i];
+        if (el) {
+          newArray.push(el);
+        }
+      }
+      setData(newArray);
+    } else {
+      const newArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = data[i];
+        if (el) {
+          newArray.push(el);
+        }
+      }
+      setData(newArray);
+    }
+  }, [filterd, page, limit])
 
   return (
     <div>

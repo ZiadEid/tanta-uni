@@ -10,12 +10,14 @@ import Loader from '../../Layout/Loader';
 const DoctorSubjects = () => {
   const navigate = useNavigate();
   // Global State
-  const { BASE_URL, token, doctorSubjectsActive, user, pageName } = useStore();
+  const { BASE_URL, token, doctorSubjectsActive, user } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [subjectId, setSubjectId] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [filterdSubjects, setFilterdSubjects] = useState([]);
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getData = async () => {
     try {
@@ -26,8 +28,9 @@ const DoctorSubjects = () => {
       });
       const newSubjects = [];
       const newId = [];
-      res.data.subjects.forEach((el) => {
+      res.data.subjects.forEach((el, index) => {
         newSubjects.push({
+          id: index + 1,
           name: el.name,
           code: el.code,
           hoursNumber: el.hoursNumber,
@@ -37,7 +40,15 @@ const DoctorSubjects = () => {
         newId.push(el._id);
       })
       setSubjects(newSubjects);
-      setId(newId);
+      setSubjectId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newSubjects[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -46,12 +57,26 @@ const DoctorSubjects = () => {
     }
   }
 
-  // Get Subjects
   useEffect(() => {
     getData();
     doctorSubjectsActive();
-    console.log(pageName)
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = subjects[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   return (
     <div className='grow relative px-6 py-2'>
@@ -68,12 +93,22 @@ const DoctorSubjects = () => {
                   <div
                     className="actions flex md:flex-row md:justify-between md:items-end flex-col-reverse gap-2"
                   >
-                    <SearchInput data={subjects} setData={setFilterdSubjects} />
+                    <SearchInput
+                      data={subjects}
+                      setData={setPagenatedArray}
+                      page={page}
+                      limit={limit}
+                    />
                   </div>
                   <Table
-                    headers={["#", "اسم المادة", "كود المادة", "عدد الساعات", "اعلي درجة", "الترم",  ""]}
-                    tableData={filterdSubjects.length == 0 ? subjects : filterdSubjects}
-                    id={id}
+                    headers={["#", "اسم المادة", "كود المادة", "عدد الساعات", "اعلي درجة", "الترم", ""]}
+                    tableData={subjects}
+                    id={subjectId}
+                    pagenatedArray={pagenatedArray}
+                    page={page}
+                    setPage={setPage}
+                    limit={limit}
+                    setLimit={setLimit}
                   />
                 </>
                 :

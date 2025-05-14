@@ -3,7 +3,6 @@ import Confirmation from './../Confirmation/';
 import { useParams } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useStore } from "../../Store";
-import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -95,8 +94,7 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
             <tbody>
               {
                 tableData.map((el, index) => (
-                  <tr key={id[index]} className={`${style.shadowCustomed} rounded-lg bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
-                    <td className="text-sm px-4 py-6">{index + 1}</td>
+                  <tr key={id[el.id - 1]} className={`${style.shadowCustomed} rounded-lg bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
                     {
                       Object.keys(el).map((key) => (
                         <td key={key} className="max-w-[250px] text-sm px-4 py-6">{el[key]}</td>
@@ -114,15 +112,6 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
               }
             </tbody>
           </table>
-        </div>
-        <div className={`${style.shadowCustomed} mb-4 px-4 py-6 bg-gray-100 dark:bg-gray-800 shadow-lg text-gray-900 dark:text-gray-400 rounded flex justify-center items-center md:gap-2`}>
-          <div className="cursor-pointer hover:text-white hover:bg-gray-900 p-2 rounded-full">
-            <HiOutlineArrowLongRight />
-          </div>
-          <p>صفحة <span className="px-2 py-px text-gray-900 dark:text-white">1</span> من <span className="px-2 py-px text-gray-500">4</span></p>
-          <div className="cursor-pointer hover:text-white hover:bg-gray-900 p-2 rounded-full">
-            <HiOutlineArrowLongLeft />
-          </div>
         </div>
       </div>
     </div >

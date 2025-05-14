@@ -27,10 +27,13 @@ const DoctorsPage = () => {
   } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [docotrId, setDocotrId] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [filterdDoctors, setFilterdDoctors] = useState([]);
-  const [doctor, setDoctor] = useState({})
+  const [doctor, setDoctor] = useState({});
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getData = async () => {
     try {
@@ -41,8 +44,9 @@ const DoctorsPage = () => {
       });
       const newDoctors = [];
       const newId = [];
-      res.data.doctors.forEach((el) => {
+      res.data.doctors.forEach((el, index) => {
         newDoctors.push({
+          id: index + 1,
           name: el.name,
           nationalId: el.nationalId,
           phoneNumber: el.phoneNumber,
@@ -51,7 +55,15 @@ const DoctorsPage = () => {
         newId.push(el._id);
       })
       setDoctors(newDoctors);
-      setId(newId);
+      setDocotrId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newDoctors[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -64,6 +76,22 @@ const DoctorsPage = () => {
     getData();
     doctorsActive();
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = doctors[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   // Delete Doctor
   const deleteRow = async (index) => {
@@ -99,7 +127,7 @@ const DoctorsPage = () => {
       newDoctor.phoneNumber = res.data.doctor.phoneNumber;
       newDoctor.email = res.data.doctor.email;
       newDoctor.major = res.data.doctor.major;
-      setDoctor({...newDoctor});
+      setDoctor({ ...newDoctor });
     } catch (error) {
       navigate("/error");
       console.log(error)
@@ -140,7 +168,12 @@ const DoctorsPage = () => {
                 {
                   doctors.length !== 0
                   &&
-                  <SearchInput data={doctors} setData={setFilterdDoctors} />
+                  <SearchInput
+                    data={doctors}
+                    setData={setPagenatedArray}
+                    page={page}
+                    limit={limit}
+                  />
                 }
                 <AddNewBtn />
               </div>
@@ -150,8 +183,13 @@ const DoctorsPage = () => {
                   <>
                     <Table
                       headers={["#", "الأسم", "الرقم القومي", "الهاتف", "البريد الالكتروني", ""]}
-                      tableData={filterdDoctors.length == 0 ? doctors : filterdDoctors}
-                      id={id}
+                      tableData={doctors}
+                      id={docotrId}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                       deleteRow={deleteRow}
                       getOneData={getDoctor}
                     />

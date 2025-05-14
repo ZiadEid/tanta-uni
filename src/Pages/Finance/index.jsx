@@ -4,12 +4,12 @@ import NoContent from "../../Components/NoContent";
 import { ToastContainer, toast } from "react-toastify";
 import Loader from "../../Layout/Loader";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SearchInput from './../../Components/SearchInput/';
 import Table from './../../Components/Table';
-import Confirmation from "../../Components/Confirmation";
 
 const Finance = () => {
+  const navigate = useNavigate();
   const { yearId } = useParams();
   // Global State
   const {
@@ -19,10 +19,11 @@ const Finance = () => {
   } = useStore();
   // Local State
   const [loader, setLoader] = useState([]);
-  const [id, setId] = useState([]);
-  const [finance, setFinance] = useState([]);
   const [financeId, setFinanceId] = useState([]);
-  const [filterdFinance, setFilterdFinance] = useState([]);
+  const [finance, setFinance] = useState([]);
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getData = async () => {
     try {
@@ -33,8 +34,9 @@ const Finance = () => {
       });
       const newFinance = [];
       const newId = [];
-      res.data.payments.forEach((el) => {
+      res.data.payments.forEach((el, index) => {
         newFinance.push({
+          id: index + 1,
           name: el.studentId.name,
           yearCost: el.yearCost,
           isPaid: el.isPaid ? "مدفوع" : "غير مدفوع",
@@ -42,13 +44,20 @@ const Finance = () => {
         newId.push(el._id);
       })
       setFinance(newFinance);
-      setId(newId);
+      setFinanceId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newFinance[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
     } catch (error) {
-      // navigate("/error");
-      console.log(error)
+      navigate("/error");
     }
   }
 
@@ -57,6 +66,23 @@ const Finance = () => {
     financeActive();
   }, []);
 
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = finance[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
+
+  // Confirm payment 
   const confirmPayment = async (id) => {
     const value = {
       paymentId: `${id}`
@@ -92,7 +118,12 @@ const Finance = () => {
                 {
                   finance.length != 0
                   &&
-                  <SearchInput data={finance} setData={setFilterdFinance} />
+                  <SearchInput
+                    data={finance}
+                    setData={setPagenatedArray}
+                    page={page}
+                    limit={limit}
+                  />
                 }
               </div>
               {
@@ -101,9 +132,14 @@ const Finance = () => {
                   <>
                     <Table
                       headers={["#", "الطالب", "سعر السنة", "الحالة", "", ""]}
-                      tableData={filterdFinance.length == 0 ? finance : filterdFinance}
-                      id={id}
+                      tableData={finance}
+                      id={financeId}
                       confirmPayment={confirmPayment}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                     />
                     <ToastContainer />
                   </>

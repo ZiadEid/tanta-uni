@@ -3,7 +3,6 @@ import Table from '../../Components/Table';
 import { useStore } from '../../Store';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import PopUpSubjects from '../../Components/PopUpSubjects';
 import { useNavigate, useParams } from 'react-router-dom';
 import SearchInput from '../../Components/SearchInput';
 import AddNewBtn from '../../Components/AddNewBtn';
@@ -30,10 +29,12 @@ const StudentSubjects = () => {
   } = useStore();
   // Local State
   const [loader, setLoader] = useState(true);
-  const [id, setId] = useState([]);
+  const [subjectId, setSubjectId] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [filterdSubjects, setFilterdSubjects] = useState([]);
   const [subject, setSubject] = useState({});
+  const [pagenatedArray, setPagenatedArray] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2);
 
   const getData = async () => {
     try {
@@ -44,8 +45,9 @@ const StudentSubjects = () => {
       });
       const newSubjects = [];
       const newId = [];
-      res.data.subjects.forEach((el) => {
+      res.data.subjects.forEach((el, index) => {
         newSubjects.push({
+          id: index + 1,
           name: el.subjectId.name,
           code: el.subjectId.code,
           hoursNumber: el.subjectId.hoursNumber,
@@ -56,7 +58,15 @@ const StudentSubjects = () => {
         newId.push(el.subjectId._id);
       })
       setSubjects(newSubjects);
-      setId(newId);
+      setSubjectId(newId);
+      const newPagenatedArray = []
+      for (let i = (page - 1) * limit; i < (page * limit); i++) {
+        const el = newSubjects[i];
+        if (el) {
+          newPagenatedArray.push(el);
+        }
+      }
+      setPagenatedArray(newPagenatedArray);
       setTimeout(() => {
         setLoader(false);
       }, 200);
@@ -65,11 +75,26 @@ const StudentSubjects = () => {
     }
   }
 
-  // Get Subjects
   useEffect(() => {
     getData();
     studentSubjectsActive();
   }, []);
+
+  // Pagenate Data
+  const pagenateData = () => {
+    const newArray = []
+    for (let i = (page - 1) * limit; i < (page * limit); i++) {
+      const el = subjects[i];
+      if (el) {
+        newArray.push(el);
+      }
+    }
+    setPagenatedArray(newArray);
+  }
+
+  useEffect(() => {
+    pagenateData();
+  }, [page, limit])
 
   // Delete Subject
   const deleteRow = async (index) => {
@@ -128,7 +153,7 @@ const StudentSubjects = () => {
                 onClick={popUpIsClosed}
                 className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
               >
-                <PopUpStudentSubjects data={id} getData={getData} />
+                <PopUpStudentSubjects data={subjectId} getData={getData} />
               </div>
             }
             {
@@ -147,7 +172,12 @@ const StudentSubjects = () => {
                 {
                   subjects.length !== 0 && user.role != "student"
                   &&
-                  <SearchInput data={subjects} setData={setFilterdSubjects} />
+                  <SearchInput
+                    data={subjects}
+                    setData={setPagenatedArray}
+                    page={page}
+                    limit={limit}
+                  />
                 }
                 {
                   user.role === "student"
@@ -162,8 +192,13 @@ const StudentSubjects = () => {
                   <>
                     <Table
                       headers={["#", "الأسم", "الكود", "عدد الساعات", "اعلي درجة", "دكتور", "الترم", "", "الدرجات"]}
-                      tableData={filterdSubjects.length == 0 ? subjects : filterdSubjects}
-                      id={id}
+                      tableData={subjects}
+                      id={subjectId}
+                      pagenatedArray={pagenatedArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      setLimit={setLimit}
                       deleteRow={deleteRow}
                       getOneData={getSubject}
                     />

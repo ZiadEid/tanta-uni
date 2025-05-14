@@ -1,15 +1,15 @@
 import style from "./index.module.css"
 import { BiSolidEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
-import { HiOutlineArrowLongRight, HiOutlineArrowLongLeft } from "react-icons/hi2";
 import { FaEye, FaPlus } from "react-icons/fa";
 import { useStore } from "../../Store";
 import { Link } from "react-router-dom";
 import Confirmation from "../Confirmation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import TablePagination from "../TablePagination";
 
 
-const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }) => {
+const Table = ({ headers, tableData, id, pagenatedArray, page, setPage, limit, setLimit, deleteRow, getOneData, confirmPayment }) => {
   // Global State
   const {
     user,
@@ -66,9 +66,8 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }
             </thead>
             <tbody>
               {
-                tableData.map((el, index) => (
-                  <tr key={id[index]} className={`${style.shadowCustomed} bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
-                    <td className="text-sm px-4 py-6">{index + 1}</td>
+                pagenatedArray.map((el, index) => (
+                  <tr key={id[el.id - 1]} className={`${style.shadowCustomed} bg-gray-100 dark:bg-gray-800 shadow text-black dark:text-white`}>
                     {
                       Object.keys(el).map((key) => (
                         <td key={key} className="max-w-[250px] text-sm px-4 py-6">{el[key]}</td>
@@ -83,10 +82,10 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }
                           &&
                           <div
                             onClick={() => {
-                              setActionIndex(id[index]);
+                              setActionIndex(id[el.id - 1]);
                               confirmationUpdate();
                               confirmationPopUpIsOpen();
-                              getOneData(id[index]);
+                              getOneData(id[el.id - 1]);
                             }}
                             className="text-lg px-2 py-6 text-orange-500 dark:text-yellow-500 cursor-pointer"
                           >
@@ -96,11 +95,11 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }
                         {
                           pageName !== "markes"
                             ?
-                            pageName !== "finance" || pageName != "generalGPA"
+                            pageName !== "finance" && pageName != "generalGPA"
                             &&
                             <div
                               onClick={() => {
-                                setActionIndex(id[index]);
+                                setActionIndex(id[el.id - 1]);
                                 confirmationDelete();
                                 confirmationPopUpIsOpen();
                               }}
@@ -218,15 +217,14 @@ const Table = ({ headers, tableData, id, deleteRow, getOneData, confirmPayment }
             </tbody>
           </table>
         </div>
-        <div className={`${style.shadowCustomed} mb-4 px-4 py-6 bg-gray-100 dark:bg-gray-800 shadow-lg text-gray-900 dark:text-gray-400 rounded flex justify-center items-center md:gap-2`}>
-          <div className="cursor-pointer hover:text-white hover:bg-gray-900 p-2 rounded-full">
-            <HiOutlineArrowLongRight />
-          </div>
-          <p>صفحة <span className="px-2 py-px text-gray-900 dark:text-white">1</span> من <span className="px-2 py-px text-gray-500">4</span></p>
-          <div className="cursor-pointer hover:text-white hover:bg-gray-900 p-2 rounded-full">
-            <HiOutlineArrowLongLeft />
-          </div>
-        </div>
+        <TablePagination
+          page={page}
+          setPage={setPage}
+          setLimit={setLimit}
+          limit={limit}
+          pagenatedArray={pagenatedArray}
+          tableData={tableData}
+        />
       </div>
     </div >
   )

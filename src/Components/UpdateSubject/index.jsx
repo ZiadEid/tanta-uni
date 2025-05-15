@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import style from "./index.module.css";
 
 const UpdateSubject = ({ data, getData }) => {
   const { BASE_URL, token, popUpUpdateIsClosed } = useStore();
@@ -77,7 +76,7 @@ const UpdateSubject = ({ data, getData }) => {
     <motion.form
       onClick={(e) => e.stopPropagation()}
       onSubmit={handleSubmit}
-      className={`max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative ${style.animateFadeSlideUp}`}
+      className={`max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative`}
       variants={formVariants}
       initial="hidden"
       animate="visible"

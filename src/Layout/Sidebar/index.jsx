@@ -8,32 +8,48 @@ import EmployeeSide from "../EmployeeSide";
 import DoctorsSide from "../DoctorsSide";
 import StudentSide from "../StudentSide";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 
 const Sidebar = () => {
   const { closeSide, setCloseSide, user } = useStore();
 
   return (
-    <div
-      className={`w-fit ${closeSide && "lg:w-fit md:w-[50%]"} h-screen flex flex-col bg-[#fcfcfc] dark:bg-gray-900 text-gray-500 dark:text-white border-e border-gray-200 dark:border-gray-700 border-dashed font-semibold relative`}
+    <motion.div
+      animate={{
+        width: closeSide ? "fit-content" : "fit-content"
+      }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="h-screen flex flex-col bg-[#fcfcfc] dark:bg-gray-900 text-gray-500 dark:text-white border-e border-gray-200 dark:border-gray-700 border-dashed font-semibold relative"
     >
-      <div
+      <motion.div
+        key={closeSide ? "open" : "closed"}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -10 }}
+        transition={{ ease: "easeOut", duration: 0.3 }}
         onClick={setCloseSide}
-        className="open-icon text-md text-black dark:text-white bg-[#fcfcfc] dark:bg-[#171e2e] p-2 border border-gray-200 dark:border-gray-700 border-dashed rounded-e absolute start-[100%] top-[20px] z-40 hover:shadow-lg cursor-pointer hidden md:block"
+        className="open-icon text-md text-black dark:text-white bg-[#fcfcfc] dark:bg-[#171e2e] p-2 border border-gray-200 dark:border-gray-700 border-dashed rounded-e absolute start-[100%] top-[20px] z-40 cursor-pointer hidden md:block
+    hover:shadow-lg transition-shadow duration-300"
       >
-        {
-          closeSide
-            ?
-            <FaBarsStaggered />
-            :
-            <FaBars />
-        }
-      </div>
+        {closeSide ? <FaBarsStaggered /> : <FaBars />}
+      </motion.div>
+
       <Link
         to={"/"}
         className="logo flex justify-center items-center gap-2 xl:text-xl lg:text-lg px-2 md:px-4 py-6"
       >
-        {closeSide && <h1 className="shrink-0 hidden md:block">Tanta University</h1>}
+        {
+          closeSide
+          &&
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: closeSide ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+            className="shrink-0 hidden md:block">
+            Tanta University
+          </motion.h1>
+        }
         <FaGraduationCap className="xl:text-5xl text-4xl text-[#2a52be] shrink-0" />
       </Link>
       <div
@@ -54,7 +70,7 @@ const Sidebar = () => {
           }
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

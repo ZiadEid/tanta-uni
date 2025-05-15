@@ -5,8 +5,9 @@ import { FaEye, FaPlus } from "react-icons/fa";
 import { useStore } from "../../Store";
 import { Link } from "react-router-dom";
 import Confirmation from "../Confirmation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TablePagination from "../TablePagination";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 const Table = ({ headers, tableData, id, pagenatedArray, page, setPage, limit, setLimit, deleteRow, getOneData, confirmPayment }) => {
@@ -27,31 +28,34 @@ const Table = ({ headers, tableData, id, pagenatedArray, page, setPage, limit, s
   const [actionIndex, setActionIndex] = useState(null);
 
   return (
-    <div className='w-full'>
-      {
-        confirmationPopUpToggel
-          ?
-          confirmationType === "delete"
-            ?
-            <div
-              onClick={confirmationPopUpIsClosed}
-              className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
-            >
-              <Confirmation id={actionIndex} type="المسح" passedFunction={deleteRow} />
-            </div>
-            :
-            <div
-              onClick={confirmationPopUpIsClosed}
-              className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
-            >
-              <Confirmation id={actionIndex} type="التعديل" passedFunction={() => {
-                popUpUpdateIsOpen();
-                confirmationPopUpIsClosed();
-              }} />
-            </div>
-          :
-          ""
-      }
+    <motion.div
+      className='w-full'
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+    >
+      <AnimatePresence>
+        {confirmationPopUpToggel && (
+          <div
+            onClick={confirmationPopUpIsClosed}
+            className="fixed top-0 end-0 bottom-0 start-0 z-50 flex justify-center items-center bg-[#171e2e61] backdrop-blur"
+          >
+            <Confirmation
+              id={actionIndex}
+              type={confirmationType === "delete" ? "المسح" : "التعديل"}
+              passedFunction={
+                confirmationType === "delete"
+                  ? deleteRow
+                  : () => {
+                    popUpUpdateIsOpen();
+                    confirmationPopUpIsClosed();
+                  }
+              }
+            />
+          </div>
+        )}
+      </AnimatePresence>
       <div>
         <div className="overflow-auto">
           <table className="min-w-[800px] table-auto w-full border-separate border-spacing-y-4">
@@ -226,7 +230,7 @@ const Table = ({ headers, tableData, id, pagenatedArray, page, setPage, limit, s
           tableData={tableData}
         />
       </div>
-    </div >
+    </motion.div >
   )
 }
 

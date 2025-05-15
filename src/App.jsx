@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import Router from "./Router";
-import { useStore } from "./Store";
-
 export default function App() {
   // Enable Dark Mode
   const loadTheme = () => {
@@ -10,10 +8,6 @@ export default function App() {
       document.documentElement.classList.add('dark');
     }
   }
-
-  useEffect(() => {
-    loadTheme();
-  }, []);
   
   return (
     <Router />

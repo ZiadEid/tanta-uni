@@ -24,7 +24,7 @@ export const useStore = create((set) => (
     theme: localStorage.getItem("theme") || "light",
     darkMode: (newMode) => set({ theme: newMode }),
     // close and open sidebar
-    closeSide: localStorage.getItem("closeSide") || true,
+    closeSide: false,
     setCloseSide: () => set((state) => ({ closeSide: !state.closeSide })),
     // Page Name
     pageName: "",

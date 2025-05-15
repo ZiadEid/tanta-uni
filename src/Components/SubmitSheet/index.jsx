@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { useStore } from "../../Store";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 const SubmitSheet = ({ getData, headers, tableData, id }) => {
   const { subjectsName } = useParams();
@@ -49,7 +50,13 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
   }
 
   return (
-    <div className='w-full'>
+    <motion.div
+      className='w-full'
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+    >
       {
         confirmationPopUpToggel &&
         <div
@@ -114,7 +121,7 @@ const SubmitSheet = ({ getData, headers, tableData, id }) => {
           </table>
         </div>
       </div>
-    </div >
+    </motion.div >
   )
 }
 

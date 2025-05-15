@@ -7,4 +7,5 @@ createRoot(document.getElementById('root')).render(
     <App />
 )
 
-// npm i tailwindcss @tailwindcss/vite axios react-router-dom react-icons formik yup react-icons zustand recharts
+// npm i tailwindcss @tailwindcss/vite axios react-router-dom react-icons formik yup react-icons zustand recharts framer-motion
+

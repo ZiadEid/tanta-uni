@@ -1,7 +1,6 @@
 import { useFormik } from 'formik';
 import { IoClose } from "react-icons/io5";
 import { BsAlphabet } from "react-icons/bs";
-import { IoMdArrowDropdown } from "react-icons/io";
 import { useStore } from '../../Store';
 import { MdEmail } from "react-icons/md";
 import { FaIdCard } from "react-icons/fa6";
@@ -10,22 +9,17 @@ import { UpdateStudentsSchema } from './UpdateStudentsSchema';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const UpdateStudent = ({ data, getData }) => {
-  // Global State
   const { BASE_URL, token, popUpUpdateIsClosed } = useStore();
   const [slug, setSlug] = useState(null);
 
-  const getSlug = () => {
-    setSlug(data.universityId.slice(0, 3));
-  }
-
   useEffect(() => {
-    getSlug();
-    console.log(data)
-  }, [])
+    setSlug(data.universityId.slice(0, 3));
+    console.log(data);
+  }, [data]);
 
-  // form on submit function
   const onSubmit = async (values, actions) => {
     const newValues = {
       ...values,
@@ -33,25 +27,21 @@ const UpdateStudent = ({ data, getData }) => {
       phoneNumber: `${values.phoneNumber}`,
       hourCost: `${values.hourCost}`,
       universityId: `${slug}${values.universityId}`,
-    }
+    };
+
     try {
       const res = await axios.put(`${BASE_URL}student/updateOne/${data.id}`, newValues, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       popUpUpdateIsClosed();
-      const notify = () => toast.success(`${res.data.message}`, { autoClose: 1000 });
-      notify();
+      toast.success(res.data.message, { autoClose: 1000 });
       actions.resetForm();
       getData();
     } catch (error) {
-      const notify = () => toast.error(`${error.response.data.message}`, { autoClose: 2000 });
-      notify();
+      toast.error(error.response?.data?.message || 'Error', { autoClose: 2000 });
     }
-  }
+  };
 
-  // formik hook for handling login form actions
   const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       nationalId: `${data.nationalId}`,
@@ -62,137 +52,162 @@ const UpdateStudent = ({ data, getData }) => {
       email: `${data.email}`,
     },
     validationSchema: UpdateStudentsSchema,
-    onSubmit
+    onSubmit,
   });
 
+  const formVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
+    exit: { opacity: 0, y: 20, scale: 0.9, transition: { duration: 0.3, ease: "easeIn" } }
+  };
+
+  const buttonVariants = {
+    hover: { scale: 1.05, backgroundColor: "#2b6cb0" },
+    tap: { scale: 0.95 }
+  };
+
   return (
-    <form
-      onClick={(e) => { e.stopPropagation() }}
+    <motion.form
+      onClick={e => e.stopPropagation()}
       onSubmit={handleSubmit}
-      className='max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative'>
+      className="max-w-full w-[400px] flex flex-col gap-3 p-8 bg-[#f6f3f454] dark:bg-gray-800 text-dark rounded-lg shadow-lg relative"
+      variants={formVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <span
         onClick={popUpUpdateIsClosed}
-        className='absolute top-[5px] start-[5px] text-gray-900 dark:text-white hover:text-white hover:bg-red-500 duration-150 rounded-full text-sm p-[2px] cursor-pointer'
+        className="absolute top-[5px] start-[5px] text-gray-900 dark:text-white hover:text-white hover:bg-red-500 duration-150 rounded-full text-sm p-[2px] cursor-pointer"
       >
         <IoClose />
       </span>
-      <div className='flex'>
+
+      <div className="flex">
         <input
           type="number"
-          name='nationalId'
-          placeholder='رقم البطاقة (14 رقم)'
+          name="nationalId"
+          placeholder="رقم البطاقة (14 رقم)"
           value={values.nationalId}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+          className="h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow"
         />
-        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+        <div className="w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none">
           <FaIdCard />
         </div>
       </div>
-      {
-        errors.nationalId && touched.nationalId &&
-        <p className='error text-[#dc3545]'>{errors.nationalId}</p>
-      }
-      <div className='flex'>
+      {errors.nationalId && touched.nationalId && (
+        <p className="error text-[#dc3545]">{errors.nationalId}</p>
+      )}
+
+      <div className="flex">
         <input
-          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
           type="text"
-          name='name'
-          placeholder='اسم الطالب'
+          name="name"
+          placeholder="اسم الطالب"
           value={values.name}
           onChange={handleChange}
           onBlur={handleBlur}
+          className="h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow"
         />
-        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+        <div className="w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none">
           <BsAlphabet />
         </div>
       </div>
-      {
-        errors.name && touched.name &&
-        <p className='error text-[#dc3545]'>{errors.name}</p>
-      }
-      <div className='flex'>
+      {errors.name && touched.name && (
+        <p className="error text-[#dc3545]">{errors.name}</p>
+      )}
+
+      <div className="flex">
         <input
           type="number"
-          name='universityId'
-          placeholder='رقم الجلوس'
+          name="universityId"
+          placeholder="رقم الجلوس"
           value={values.universityId}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+          className="h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow"
         />
-        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+        <div className="w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none">
           <TbNumbers />
         </div>
       </div>
-      {
-        errors.universityId && touched.universityId &&
-        <p className='error text-[#dc3545]'>{errors.universityId}</p>
-      }
-      <div className='flex'>
+      {errors.universityId && touched.universityId && (
+        <p className="error text-[#dc3545]">{errors.universityId}</p>
+      )}
+
+      <div className="flex">
         <input
           type="text"
-          name='phoneNumber'
-          placeholder='رقم الهاتف'
+          name="phoneNumber"
+          placeholder="رقم الهاتف"
           value={values.phoneNumber}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+          className="h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow"
         />
-        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+        <div className="w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none">
           <TbNumbers />
         </div>
       </div>
-      {
-        errors.phoneNumber && touched.phoneNumber &&
-        <p className='error text-[#dc3545]'>{errors.phoneNumber}</p>
-      }
-      <div className='flex'>
+      {errors.phoneNumber && touched.phoneNumber && (
+        <p className="error text-[#dc3545]">{errors.phoneNumber}</p>
+      )}
+
+      <div className="flex">
         <input
           type="number"
-          name='hourCost'
-          placeholder='سعر الساعة'
+          name="hourCost"
+          placeholder="سعر الساعة"
           value={values.hourCost}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+          className="h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow"
         />
-        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+        <div className="w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none">
           <TbNumbers />
         </div>
       </div>
-      {
-        errors.hourCost && touched.hourCost &&
-        <p className='error text-[#dc3545]'>{errors.hourCost}</p>
-      }
-      <div className='flex'>
+      {errors.hourCost && touched.hourCost && (
+        <p className="error text-[#dc3545]">{errors.hourCost}</p>
+      )}
+
+      <div className="flex">
         <input
           type="email"
-          name='email'
-          placeholder='البريد الالكتروني'
+          name="email"
+          placeholder="البريد الالكتروني"
           value={values.email}
           onChange={handleChange}
           onBlur={handleBlur}
-          className={`h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow`}
+          className="h-[40px] bg-white border border-[#2b6cb033] border-e-0 rounded ps-3 rounded-e-none placeholder-[#718096] grow"
         />
-        <div className='w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none'>
+        <div className="w-[50px] flex justify-center items-center shadow text-xl text-[#3d4148] bg-white border border-[#2b6cb033] rounded rounded-s-none">
           <MdEmail />
         </div>
       </div>
-      {
-        errors.email && touched.email &&
-        <p className='error text-[#dc3545]'>{errors.email}</p>
-      }
-      <button
+      {errors.email && touched.email && (
+        <p className="error text-[#dc3545]">{errors.email}</p>
+      )}
+
+      <motion.button
         disabled={isSubmitting}
-        type='submit'
-        className='h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] hover:bg-[#2b6cb0] text-white border border-[#3182ce] rounded duration-200 overflow-hidden cursor-pointer outline-none'
+        type="submit"
+        className="h-[40px] mt-3 relative flex items-center justify-center gap-4 bg-[#3182ce] text-white border border-[#3182ce] rounded cursor-pointer outline-none"
+        variants={buttonVariants}
+        whileHover="hover"
+        whileTap="tap"
       >
         submit
-      </button>
-    </form>
-  )
-}
+      </motion.button>
+    </motion.form>
+  );
+};
 
-export default UpdateStudent
+const buttonVariants = {
+  hover: { scale: 1.05, backgroundColor: "#2b6cb0" },
+  tap: { scale: 0.95 }
+};
+
+export default UpdateStudent;

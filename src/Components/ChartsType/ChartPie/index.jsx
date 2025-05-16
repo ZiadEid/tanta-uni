@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   ResponsiveContainer,
   PieChart,
@@ -7,27 +8,37 @@ import {
   Legend,
 } from 'recharts';
 
-const ChartPie = () => {
-  const pieData = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-  ];
+const ChartPie = ({ keys, values, colors }) => {
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+  const [data, setData] = useState([])
+
+  const getData = () => {
+    const newValues = []
+    values.forEach((el, index) => {
+      newValues.push({
+        name: keys[index],
+        value: el
+      })
+    });
+    setData(newValues)
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <PieChart>
         <Pie
-          data={pieData}
+          data={data}
           dataKey="value"
           nameKey="name"
           outerRadius={120}
           label
         >
-          {pieData.map((entry, idx) => (
-            <Cell key={`pie-${idx}`} fill={COLORS[idx % COLORS.length]} />
+          {data.map((entry, idx) => (
+            <Cell key={`pie-${idx}`} fill={colors[idx % colors.length]} />
           ))}
         </Pie>
         <Tooltip />

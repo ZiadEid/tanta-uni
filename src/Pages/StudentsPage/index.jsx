@@ -31,12 +31,11 @@ const StudentsPage = () => {
   const [loader, setLoader] = useState(true);
   const [studentId, setStudentId] = useState([]);
   const [students, setStudents] = useState([]);
-  const [filterdStudents, setFilterdStudents] = useState([]);
   const [student, setStudent] = useState({});
   const [slug, setSlug] = useState(null);
   const [pagenatedArray, setPagenatedArray] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(4);
 
   const getCurrentSlug = () => {
     mSections.forEach((el) => {

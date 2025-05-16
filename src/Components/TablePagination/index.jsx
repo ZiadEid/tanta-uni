@@ -29,9 +29,9 @@ const TablePagination = ({ tableData, page, setPage, limit, setLimit }) => {
           className="mx-2 py-1 px-2 border border-gray-500 rounded"
           onChange={(e) => setLimit(Number(e.target.value))}
         >
-          <option value="2">2</option>
-          <option value="5">5</option>
-          <option value="7">7</option>
+          <option value="4">4</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
         </select>
         صفحة
         <span className="px-2 py-px text-gray-900 dark:text-white">{page}</span>

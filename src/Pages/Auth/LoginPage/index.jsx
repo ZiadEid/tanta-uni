@@ -3,7 +3,7 @@ import LoginForm from '../../../Components/LoginForm';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useStore } from '../../../Store';
-import gifBg from '/Assets/istockphoto-1473765034-640_adpp_is.mp4';
+import gifBg from '/Assets/bg-vedio.mp4';
 
 const LoginPage = () => {
   const { token } = useStore();

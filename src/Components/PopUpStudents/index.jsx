@@ -45,10 +45,10 @@ const PopUpStudents = ({ slug, getData }) => {
   const onSubmit = async (values, actions) => {
     const newValues = {
       ...values,
-      nationalId: values.nationalId,
+      nationalId: `${values.nationalId}`,
       phoneNumber: values.phoneNumber,
       universityId: `${slug}${values.universityId}`,
-      hourCost: values.hourCost,
+      hourCost: `${values.hourCost}`,
       sectionName: mSection,
       yearId: values.yearId === "undefined" ? yearId[0] : values.yearId,
     };
@@ -76,9 +76,11 @@ const PopUpStudents = ({ slug, getData }) => {
       hourCost: "",
       yearId: yearId[0] || ""
     },
+    enableReinitialize: true,
     validationSchema: PopUpStudentsSchema,
     onSubmit
   });
+  
 
   const formVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },

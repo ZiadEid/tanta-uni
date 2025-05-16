@@ -23,7 +23,7 @@ const Finance = () => {
   const [finance, setFinance] = useState([]);
   const [pagenatedArray, setPagenatedArray] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(4);
 
   const getData = async () => {
     try {

@@ -17,7 +17,7 @@ const DoctorSubjects = () => {
   const [subjects, setSubjects] = useState([]);
   const [pagenatedArray, setPagenatedArray] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(2);
+  const [limit, setLimit] = useState(4);
 
   const getData = async () => {
     try {

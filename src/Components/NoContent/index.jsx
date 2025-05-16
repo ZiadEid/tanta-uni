@@ -17,7 +17,7 @@ const NoContent = ({ data }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-center mb-4 leading-loose text-gray-600 dark:text-gray-400"
+          className="text-center mb-4 leading-loose text-white"
         >
           لا يوجد {data}
         </motion.p>

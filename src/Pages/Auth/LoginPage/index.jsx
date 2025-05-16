@@ -3,8 +3,7 @@ import LoginForm from '../../../Components/LoginForm';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useStore } from '../../../Store';
-import vedioBg from '/Assets/vedio-bg.mp4';
-import gifBg from '/Assets/gif-bg.gif';
+import gifBg from '/Assets/istockphoto-1473765034-640_adpp_is.mp4';
 
 const LoginPage = () => {
   const { token } = useStore();
@@ -30,11 +29,16 @@ const LoginPage = () => {
 
   return (
     <div className='relative h-full w-full overflow-hidden flex justify-center items-center min-h-screen p-2'>
-      <img
+      {/* <img
         className="absolute top-1/2 left-1/2 min-w-full min-h-full object-cover -translate-x-1/2 -translate-y-1/2"
         src={gifBg}
         alt="tanta Universtiy"
-      />
+      /> */}
+      <video autoPlay muted loop playsInline 
+          className="absolute top-1/2 left-1/2 min-w-full min-h-full object-cover -translate-x-1/2 -translate-y-1/2">
+          <source src={gifBg} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       <div className="layer absolute top-0 bottom-0 start-0 end-0 bg-[#fcfcfc] dark:bg-gray-900 opacity-95"></div>
 
 

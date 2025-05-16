@@ -23,7 +23,7 @@ const ProfilePage = () => {
   }, [token])
   return (
     <div
-      className="grow pt-5 px-5 md:px-10 xl:px-50 dark:bg-gray-900 flex justify-center items-center gap-5 relative">
+      className="grow pt-5 px-5 md:px-10 xl:px-50 flex justify-center items-center gap-5 relative">
       {
         loader
           ?

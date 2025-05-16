@@ -39,7 +39,7 @@ const LoginPage = () => {
           <source src={gifBg} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-      <div className="layer absolute top-0 bottom-0 start-0 end-0 bg-[#fcfcfc] dark:bg-gray-900 opacity-95"></div>
+      <div className="layer absolute top-0 bottom-0 start-0 end-0 bg-[#0000004a] dark:bg-[#0d1321cc] backdrop-blur"></div>
 
 
       <div className="relative z-10 text-white text-center p-10">
